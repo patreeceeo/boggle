@@ -68,29 +68,49 @@ this.boggle = this.boggle || {};
   };
 
   boggle.findWords = function (wordList, letterGrid) {
-    var foundWords, incompleteWords, self;
-    foundWords = [];
-    incompleteWords = [];
-    self = this;
+    var foundWords = [],
+        incompleteWords = [],
+        self = this,
+        columnIndex,
+        letters,
+        reverseWordList;
+
+    reverseWordList = wordList.map(function (w) {
+      return w.split("").reverse().join("");
+    });
+
     letterGrid.forEach(function (letter) {
       incompleteWords.forEach(function (word, index) {
-        if(self._isNextLetterInWord(letter, word, wordList) &&
-          self._isAdjacentLetterInGrid(
+        // TODO: use letterGrid index from the forEach
+        if(self._isAdjacentLetterInGrid(
             letter, 
             self._lastLetter(word), 
             letterGrid
-            )
-          ) {
-          word = incompleteWords[index] += letter;
-          if(~wordList.indexOf(word)) {
+        )) {
+
+          if(self._isNextLetterInWord(letter, word, wordList)) {
+            word = incompleteWords[index] += letter;
+          } else if (self._isNextLetterInWord(letter, word, reverseWordList)) {
+            word = incompleteWords[index] = letter + word;
+          }
+
+          if(~wordList.indexOf(word) && !~foundWords.indexOf(word)) {
+          // TODO: just use Array#push and Array#sort
             foundWords = self._insertAlphabetically(word, foundWords);
           }
         }
       });
 
-      if(~self._lettersForColumn(0, wordList).indexOf(letter)) {
-        incompleteWords = self._insertAlphabetically(letter, incompleteWords);
-      }
+      columnIndex = 0;
+      do {
+        letters = self._lettersForColumn(columnIndex, wordList);
+        if(~letters.indexOf(letter)) {
+          // TODO: store column index along with letter
+          // TODO: just use Array#push and Array#sort
+          incompleteWords = self._insertAlphabetically(letter, incompleteWords);
+        }
+        columnIndex++;
+      } while(letters > []);
     });
 
     return foundWords;
