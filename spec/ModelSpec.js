@@ -2,70 +2,182 @@
 /* global it */
 /* global beforeEach */
 /* global expect */
-/* global _ */
-/* global Backbone */
+/* global boggle */
 
 
-describe("Model", function() {
+describe("boggle.findWords", function() {
   "use strict";
-  var model;
 
-  beforeEach(function() {
-    model = new (Backbone.SnakeCaseTransModel.extend({
-      url: "http://localhost/bogus",
-      defaults: {
-        partyTime: true,
-        thisIsSnake: false
-      }
-    }))();
+  beforeEach(function () {
+    this.wordList = [
+      "aardvark",
+      "bee",
+      "bees",
+      "monk",
+      "monks",
+      "zebra"
+    ];
   });
 
-  it("should translate names in camelCase into snake_case", function () {
-    expect(_.toCamelCase("this_is_snake")).toEqual("thisIsSnake");
+  it("finds horizontal words", function () {
+    var letterGrid = [
+      "m", "o", "n", "k",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid)).toEqual(["monk"]);
+  });
+ 
+  it("finds vertical words", function () {
+    var letterGrid = [
+      "m", " ", " ", " ",
+      "o", " ", " ", " ",
+      "n", " ", " ", " ",
+      "k", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
-  it("should translate names in snake_case into camelCase", function () {
-    expect(_.toSnakeCase("thisIsSnake")).toEqual("this_is_snake");
+  it("finds diagonal words", function () {
+    var letterGrid = [
+      "m", " ", " ", " ",
+      " ", "o", " ", " ",
+      " ", " ", "n", " ",
+      " ", " ", " ", "k",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
-  it("should translate name in an object using a map function", function () {
-    expect(_.mapPropertyNames(_.toCamelCase, {
-      this_is_snake: false,
-      party_time: true
-    })).toEqual({
-      thisIsSnake: false,
-      partyTime: true
-    });
+  it("finds backwards words", function () {
+    var letterGrid = [
+      "k", "n", "o", "m",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
-  it("should parse snake_case into camelCase", function () {
-    expect(model.parse({
-      this_is_snake: false,
-      party_time: true
-    })).toEqual({
-      thisIsSnake: false,
-      partyTime: true
-    });
+  it("finds zig zag words", function () {
+    var letterGrid = [
+      " ", "m", " ", " ",
+      " ", " ", "o", " ",
+      " ", "n", " ", " ",
+      " ", " ", "k", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
-  it("should turn camelCase into snake_case when " +
-      "communicating w/ server", function () {
-    Backbone.sync = function (method, model, options) {
-      expect(options.attrs).toEqual({
-        this_is_snake: false,
-        party_time: true
-      });
-    };
-    model.save();
-    model.save({
-      thisIsSnake: false
-    });
-    model.save({
-      partyTime: true,
-      thisIsSnake: false
-    }, {
-      patch: true
-    });
-  
+  it("finds overlapping words", function () {
+    var letterGrid = [
+      "m", "o", "n", "k",
+      " ", " ", " ", "s",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual(["monk", "monks"]);
+  });
+
+  it("finds intersecting words", function () {
+    var letterGrid = [
+      "b", " ", " ", "a",
+      "z", "e", "b", "r",
+      " ", " ", "e", " ",
+      " ", " ", " ", "s",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual(["bees", "zebra"]);
+  });
+
+  it("does not find repeated-cell words", function () {
+    var letterGrid = [
+      "b", "e", "s", " ",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual([]);
+  });
+ 
+  it("does not find non-continuous words", function () {
+    var letterGrid = [
+      "b", " ", "e", "e",
+      " ", " ", " ", "s",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual([]);
+  });
+});
+
+describe("boggle._lettersForColumn", function () {
+  "use strict"; 
+
+  beforeEach(function () {
+    this.wordList = [
+      "aardvark",
+      "bee",
+      "bees",
+      "monk",
+      "monks",
+      "zebra"
+    ];
+  });
+
+  it("finds all letters for a given column in a list of words", function () {
+    var letters;
+
+    letters = boggle._lettersForColumn(0, this.wordList);
+    expect(letters).toEqual(["a", "b", "b", "m", "m", "z"]);
+
+    letters = boggle._lettersForColumn(3, this.wordList);
+    expect(letters).toEqual(["d", "s", "k", "k", "r"]);
+
+    letters = boggle._lettersForColumn(5, this.wordList);
+    expect(letters).toEqual(["a"]);
+  });
+});
+
+describe("boggle._insertAlphabetically", function () {
+  "use strict";
+
+  beforeEach(function () {
+    this.wordList = [
+      "aardvark",
+      "bee",
+      "bees",
+      "monk",
+      "monks",
+      "zebra"
+    ];
+  });
+
+  it("inserts words into a word list in alphabetical order", function () {
+    var newWordList;
+
+    newWordList = boggle._insertAlphabetically("icecream", this.wordList);      
+
+    expect(newWordList).toEqual([
+      "aardvark",
+      "bee",
+      "bees",
+      "icecream",
+      "monk",
+      "monks",
+      "zebra"
+    ]);
   });
 });
