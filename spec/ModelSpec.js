@@ -151,33 +151,34 @@ describe("boggle._lettersForColumn", function () {
   });
 });
 
-describe("boggle._insertAlphabetically", function () {
-  "use strict";
+// describe("boggle._insertAlphabetically", function () {
+//   "use strict";
 
-  beforeEach(function () {
-    this.wordList = [
-      "aardvark",
-      "bee",
-      "bees",
-      "monk",
-      "monks",
-      "zebra"
-    ];
-  });
+//   beforeEach(function () {
+//     this.wordList = [
+//       "aardvark",
+//       "bee",
+//       "bees",
+//       "monk",
+//       "monks",
+//       "zebra"
+//     ];
+//   });
 
-  it("inserts words into a word list in alphabetical order", function () {
-    var newWordList;
+//   it("inserts words into a word list in alphabetical order", function () {
+//     var newWordList;
 
-    newWordList = boggle._insertAlphabetically("icecream", this.wordList);      
+//     newWordList = 
+//      boggle._insertAlphabetically("icecream", this.wordList);      
 
-    expect(newWordList).toEqual([
-      "aardvark",
-      "bee",
-      "bees",
-      "icecream",
-      "monk",
-      "monks",
-      "zebra"
-    ]);
-  });
-});
+//     expect(newWordList).toEqual([
+//       "aardvark",
+//       "bee",
+//       "bees",
+//       "icecream",
+//       "monk",
+//       "monks",
+//       "zebra"
+//     ]);
+//   });
+// });
