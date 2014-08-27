@@ -48,23 +48,24 @@ this.boggle = this.boggle || {};
     return indexes;
   };
 
-  boggle._isAdjacentLetterInGrid = function (letter1, letter2, letterGrid) {
-    var indexes1, indexes2, isAdjacent;
-    indexes1 = this._indexesOf(letter1, letterGrid);
+  boggle._isAdjacentLetterInGrid = function (
+      letter2, 
+      letterGrid, 
+      index1
+  ) {
+    var indexes2, isAdjacent;
     indexes2 = this._indexesOf(letter2, letterGrid);
-    indexes1.forEach(function (i1) {
-      indexes2.forEach(function (i2) {
-        var xdif, ydif;
-        xdif = Math.abs((i1 % 4) - (i2 % 4));
-        ydif = Math.abs(Math.floor(i1 / 4) - Math.floor(i2 / 4));
-        isAdjacent = isAdjacent ||
-          xdif === 0 && ydif === 0 ||
-          xdif === 0 && ydif === 1 ||
-          xdif === 1 && ydif === 0 ||
-          xdif === 1 && ydif === 1;
-      });
+    indexes2.forEach(function (index2) {
+      var xdif, ydif;
+      xdif = Math.abs((index1 % 4) - (index2 % 4));
+      ydif = Math.abs(Math.floor(index1 / 4) - Math.floor(index2 / 4));
+      isAdjacent = isAdjacent ||
+        xdif === 0 && ydif === 0 ||
+        xdif === 0 && ydif === 1 ||
+        xdif === 1 && ydif === 0 ||
+        xdif === 1 && ydif === 1;
     });
-    return !!isAdjacent;     
+    return isAdjacent; 
   };
 
   boggle.findWords = function (wordList, letterGrid) {
@@ -79,13 +80,12 @@ this.boggle = this.boggle || {};
       return w.split("").reverse().join("");
     });
 
-    letterGrid.forEach(function (letter) {
+    letterGrid.forEach(function (letter, letterGridIndex) {
       incompleteWords.forEach(function (word, index) {
-        // TODO: use letterGrid index from the forEach
         if(self._isAdjacentLetterInGrid(
-            letter, 
             self._lastLetter(word), 
-            letterGrid
+            letterGrid,
+            letterGridIndex
         )) {
 
           if(self._isNextLetterInWord(letter, word, wordList)) {
@@ -95,7 +95,7 @@ this.boggle = this.boggle || {};
           }
 
           if(~wordList.indexOf(word) && !~foundWords.indexOf(word)) {
-          // TODO: just use Array#push and Array#sort
+            // TODO: just use Array#push and Array#sort
             foundWords = self._insertAlphabetically(word, foundWords);
           }
         }
