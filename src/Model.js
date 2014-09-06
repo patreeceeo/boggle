@@ -5,6 +5,7 @@ this.boggle = this.boggle || {};
 
   var IncompleteWord;
 
+
   IncompleteWord = function (letter, index, x, y) {
     this.letters = [{letter: letter, index: index, x: x, y: y}];
   };
@@ -66,6 +67,13 @@ this.boggle = this.boggle || {};
     }
   };
 
+  boggle.forEach = function (array, fn) {
+    var i;
+    for(i = 0; i < array.length; i++) {
+      fn.call(this, array[i], i);
+    }
+  };
+
   boggle._lettersForColumn = function (columnIndex, wordList) {
     return wordList.filter(function(word) {
       return word.length > columnIndex;
@@ -84,7 +92,7 @@ this.boggle = this.boggle || {};
   boggle._indexesOf = function (letter, word) {
     var indexes;
     indexes = [];
-    word.forEach(function (l, index) {
+    this.forEach(word, function (l, index) {
       if(l === letter) {
         indexes.push(index);
       }
@@ -99,7 +107,7 @@ this.boggle = this.boggle || {};
   ) {
     var indexes2, isAdjacent;
     indexes2 = this._indexesOf(letter2, letterGrid);
-    indexes2.forEach(function (index2) {
+    this.forEach(indexes2, function (index2) {
       var xdif, ydif, width, height;
       width = boggle.options.grid.width;
       height = boggle.options.grid.height;
@@ -145,11 +153,10 @@ this.boggle = this.boggle || {};
 
   boggle.findWords = function (wordList, letterGrid) {
     var foundWords = [],
-        incompleteWords = [],
-        self = this;
+        incompleteWords = [];
 
-    letterGrid.forEach(function (letter, gridIndex) {
-      self._seedIncompleteWord(
+    this.forEach(letterGrid, function (letter, gridIndex) {
+      this._seedIncompleteWord(
         incompleteWords, 
         wordList, 
         letter, 
@@ -157,9 +164,9 @@ this.boggle = this.boggle || {};
       );
     });
 
-    letterGrid.forEach(function (letter, letterGridIndex) {
-      incompleteWords.forEach(function (incompleteWord) {
-        if(self._isAdjacentLetterInGrid(
+    this.forEach(letterGrid, function (letter, letterGridIndex) {
+      this.forEach(incompleteWords, function (incompleteWord) {
+        if(this._isAdjacentLetterInGrid(
             incompleteWord.lastLetter(), 
             letterGrid,
             letterGridIndex
@@ -167,7 +174,7 @@ this.boggle = this.boggle || {};
           if(incompleteWord.isNextLetter(letter, wordList)) {
             incompleteWord.appendLetter(letter);
           }
-        } else if(self._isAdjacentLetterInGrid(
+        } else if(this._isAdjacentLetterInGrid(
             incompleteWord.firstLetter(), 
             letterGrid,
             letterGridIndex
