@@ -59,6 +59,13 @@ this.boggle = this.boggle || {};
     return list.indexOf(this.toString()) !== -1;
   };
 
+  boggle.options = {
+    grid: {
+      width: 4,
+      height: 4
+    }
+  };
+
   boggle._lettersForColumn = function (columnIndex, wordList) {
     return wordList.filter(function(word) {
       return word.length > columnIndex;
@@ -93,9 +100,17 @@ this.boggle = this.boggle || {};
     var indexes2, isAdjacent;
     indexes2 = this._indexesOf(letter2, letterGrid);
     indexes2.forEach(function (index2) {
-      var xdif, ydif;
-      xdif = Math.abs((index1 % 4) - (index2 % 4));
-      ydif = Math.abs(Math.floor(index1 / 4) - Math.floor(index2 / 4));
+      var xdif, ydif, width, height;
+      width = boggle.options.grid.width;
+      height = boggle.options.grid.height;
+      xdif = Math.abs(
+        (index1 % width) - 
+        (index2 % width)
+      );
+      ydif = Math.abs(
+        Math.floor(index1 / height) - 
+        Math.floor(index2 / height)
+      );
       isAdjacent = isAdjacent ||
         xdif === 0 && ydif === 0 ||
         xdif === 0 && ydif === 1 ||
