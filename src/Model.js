@@ -5,8 +5,8 @@ this.boggle = this.boggle || {};
 
   var IncompleteWord;
 
-  IncompleteWord = function (letter, index) {
-    this.letters = [{letter: letter, index: index}];
+  IncompleteWord = function (letter, index, x, y) {
+    this.letters = [{letter: letter, index: index, x: x, y: y}];
   };
 
   IncompleteWord.prototype.firstLetter = function () {
@@ -120,13 +120,24 @@ this.boggle = this.boggle || {};
     return isAdjacent; 
   };
 
-  boggle._seedIncompleteWords = function (incompleteWords, wordList, letter) {
+  boggle._seedIncompleteWord = function (
+      incompleteWords, 
+      wordList, 
+      letter, 
+      gridIndex) {
     var letters, columnIndex;
     columnIndex = 0;
     do {
       letters = this._lettersForColumn(columnIndex, wordList);
       if(~letters.indexOf(letter)) {
-        incompleteWords.push(new IncompleteWord(letter, columnIndex));
+        incompleteWords.push(
+          new IncompleteWord(
+            letter, 
+            columnIndex,
+            gridIndex % boggle.options.grid.width,
+            Math.floor(gridIndex / boggle.options.grid.height)
+          )
+        );
       }
       columnIndex++;
     } while(letters > []);
@@ -137,8 +148,13 @@ this.boggle = this.boggle || {};
         incompleteWords = [],
         self = this;
 
-    letterGrid.forEach(function (letter) {
-      self._seedIncompleteWords(incompleteWords, wordList, letter);
+    letterGrid.forEach(function (letter, gridIndex) {
+      self._seedIncompleteWord(
+        incompleteWords, 
+        wordList, 
+        letter, 
+        gridIndex
+      );
     });
 
     letterGrid.forEach(function (letter, letterGridIndex) {
