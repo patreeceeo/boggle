@@ -10,11 +10,11 @@ describe("boggle.findWords", function() {
 
   beforeEach(function () {
     this.wordList = [
-      // "aardvark",
-      // "bee",
-      // "bees",
-      // "monk",
-      // "monks",
+      "aardvark",
+      "bee",
+      "bees",
+      "monk",
+      "monks",
       "zebra"
     ];
   });

@@ -5,7 +5,6 @@ this.boggle = this.boggle || {};
 
   var IncompleteWord;
 
-
   IncompleteWord = function (letter, index, x, y) {
     this.letters = [{letter: letter, index: index, x: x, y: y}];
   };
@@ -22,32 +21,43 @@ this.boggle = this.boggle || {};
     return this.letters[this.letters.length - 1];
   };
 
-  IncompleteWord.prototype.isNextLetter = function (letter, wordList) {
+  IncompleteWord.prototype.first = function () {
+    return this.letters[0];
+  };
+
+  IncompleteWord.prototype.isSuffix = function (incompleteWord, wordList) {
     var word, truncWordList, self;
     self = this;
-    word = this.toString() + letter;
+    word = "" + this + incompleteWord;
     truncWordList = wordList.map(function (w) {
-      return w.slice(self.letters[0].index, self.last().index + 2);
+      return w.slice(self.first().index, incompleteWord.last().index + 2);
+    });
+    return truncWordList.indexOf(word) != -1;
+  };
+ 
+  IncompleteWord.prototype.isPrefix = function (incompleteWord, wordList) {
+    var word, truncWordList, self;
+    self = this;
+    word = "" + incompleteWord + this;
+    truncWordList = wordList.map(function (w) {
+      return w.slice(incompleteWord.first().index - 1, self.last().index + 1);
     });
     return truncWordList.indexOf(word) != -1;
   };
 
-  IncompleteWord.prototype.isPrevLetter = function (letter, wordList) {
-    var word, truncWordList, self;
-    self = this;
-    word = letter + this.toString();
-    truncWordList = wordList.map(function (w) {
-      return w.slice(self.letters[0].index - 1, self.last().index + 1);
-    });
-    return truncWordList.indexOf(word) != -1;
+  IncompleteWord.prototype.clone = function (letters) {
+    var clone;
+    clone = new IncompleteWord();
+    clone.letters = letters;
+    return clone;
   };
 
-  IncompleteWord.prototype.prependLetter = function (letter) {
-    this.letters.unshift({letter: letter, index: this.letters[0].index - 1});
+  IncompleteWord.prototype.prepend = function (incompleteWord) {
+    return this.clone(incompleteWord.letters.concat(this.letters));
   };
 
-  IncompleteWord.prototype.appendLetter = function (letter) {
-    this.letters.push({letter: letter, index: this.last().index + 1});
+  IncompleteWord.prototype.append = function (incompleteWord) {
+    return this.clone(this.letters.concat(incompleteWord.letters));
   };
 
   IncompleteWord.prototype.toString = function () {
@@ -100,32 +110,23 @@ this.boggle = this.boggle || {};
     return indexes;
   };
 
-  boggle._isAdjacentLetterInGrid = function (
-      letter2, 
-      letterGrid, 
-      index1
-  ) {
-    var indexes2, isAdjacent;
-    indexes2 = this._indexesOf(letter2, letterGrid);
-    this.forEach(indexes2, function (index2) {
-      var xdif, ydif, width, height;
-      width = boggle.options.grid.width;
-      height = boggle.options.grid.height;
-      xdif = Math.abs(
-        (index1 % width) - 
-        (index2 % width)
-      );
-      ydif = Math.abs(
-        Math.floor(index1 / height) - 
-        Math.floor(index2 / height)
-      );
-      isAdjacent = isAdjacent ||
-        xdif === 0 && ydif === 0 ||
-        xdif === 0 && ydif === 1 ||
-        xdif === 1 && ydif === 0 ||
-        xdif === 1 && ydif === 1;
-    });
-    return isAdjacent; 
+
+  boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
+    var xdif, ydif, width, height;
+    width = boggle.options.grid.width;
+    height = boggle.options.grid.height;
+    xdif = Math.abs(
+      incompleteWord1.last().x - 
+      incompleteWord2.first().x
+    );
+    ydif = Math.abs(
+      incompleteWord1.last().y - 
+      incompleteWord2.first().y
+    );
+    return xdif === 0 && ydif === 0 ||
+           xdif === 0 && ydif === 1 ||
+           xdif === 1 && ydif === 0 ||
+           xdif === 1 && ydif === 1;
   };
 
   boggle._seedIncompleteWord = function (
@@ -164,29 +165,29 @@ this.boggle = this.boggle || {};
       );
     });
 
-    this.forEach(letterGrid, function (letter, letterGridIndex) {
-      this.forEach(incompleteWords, function (incompleteWord) {
-        if(this._isAdjacentLetterInGrid(
-            incompleteWord.lastLetter(), 
-            letterGrid,
-            letterGridIndex
+    this.forEach(incompleteWords, function (incompleteWordOuter) {
+      this.forEach(incompleteWords, function (incompleteWordInner) {
+        if(this._areAdjacent(
+          incompleteWordInner,
+          incompleteWordOuter
         )) {
-          if(incompleteWord.isNextLetter(letter, wordList)) {
-            incompleteWord.appendLetter(letter);
+          if(incompleteWordInner.isSuffix(incompleteWordOuter, wordList)) {
+            incompleteWords.push(
+              incompleteWordInner.append(incompleteWordOuter));
           }
-        } else if(this._isAdjacentLetterInGrid(
-            incompleteWord.firstLetter(), 
-            letterGrid,
-            letterGridIndex
+        } else if(this._areAdjacent(
+          incompleteWordOuter,
+          incompleteWordInner
         )) {
-          if (incompleteWord.isPrevLetter(letter, wordList)) {
-            incompleteWord.prependLetter(letter);
+          if (incompleteWordInner.isPrefix(incompleteWordOuter, wordList)) {
+            incompleteWords.push(
+              incompleteWordInner.prepend(incompleteWordOuter));
           }
         }
 
-        if(incompleteWord.isInList(wordList) &&
-          !incompleteWord.isInList(foundWords)) {
-          foundWords.push(incompleteWord.toString());
+        if(incompleteWordInner.isInList(wordList) &&
+          !incompleteWordInner.isInList(foundWords)) {
+          foundWords.push(incompleteWordInner.toString());
         }
       });
     });
