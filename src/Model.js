@@ -18,12 +18,23 @@ this.boggle = this.boggle || {};
   };
 
   IncompleteWord.prototype.isNextLetter = function (letter, wordList) {
-    var index, letters, nextLetters;
-    index = this.last().index;
-    letters = boggle._lettersForColumn(index, wordList);
-    nextLetters = boggle._lettersForColumn(index + 1, wordList);
-    return nextLetters.indexOf(letter) !== -1 &&
-           letters.indexOf(this.lastLetter()) !== -1;
+    var word, truncWordList, self;
+    self = this;
+    word = this.toWord() + letter;
+    truncWordList = wordList.map(function (w) {
+      return w.slice(self.letters[0].index, self.last().index + 2);
+    });
+    return truncWordList.indexOf(word) != -1;
+  };
+
+  IncompleteWord.prototype.isPrevLetter = function (letter, wordList) {
+    var word, truncWordList, self;
+    self = this;
+    word = letter + this.toWord();
+    truncWordList = wordList.map(function (w) {
+      return w.slice(self.letters[0].index - 1, self.last().index + 1);
+    });
+    return truncWordList.indexOf(word) != -1;
   };
 
   IncompleteWord.prototype.prependLetter = function (letter) {
@@ -44,10 +55,6 @@ this.boggle = this.boggle || {};
     return list.indexOf(this.toWord()) !== -1;
   };
 
-  // boggle._lastLetter = function (word) {
-  //   return word[word.length - 1];
-  // };
-
   boggle._lettersForColumn = function (columnIndex, wordList) {
     return wordList.filter(function(word) {
       return word.length > columnIndex;
@@ -62,21 +69,6 @@ this.boggle = this.boggle || {};
     after = wordList.slice(index, wordList.length);
     return before.concat([word], after);
   };
-
-  // boggle._insertAlphabetically = function (word, wordList) {
-  //   var index = 0;
-  //   while(word > wordList[index]) {
-  //     index++;
-  //   }
-  //   return this._insert(word, wordList, index); 
-  // };
-
-  // boggle._isNextLetterInWord = function (letter, word, wordList) {
-  //   return !!~this._lettersForColumn(word.length, wordList)
-  //       .indexOf(letter) &&
-  //     ~this._lettersForColumn(word.length - 1, wordList)
-  //       .indexOf(word.lastLetter());
-  // };
 
   boggle._indexesOf = function (letter, word) {
     var indexes;
@@ -109,16 +101,25 @@ this.boggle = this.boggle || {};
     return isAdjacent; 
   };
 
+  boggle._seedIncompleteWords = function (incompleteWords, wordList, letter) {
+    var letters, columnIndex;
+    columnIndex = 0;
+    do {
+      letters = this._lettersForColumn(columnIndex, wordList);
+      if(~letters.indexOf(letter)) {
+        incompleteWords.push(new IncompleteWord(letter, columnIndex));
+      }
+      columnIndex++;
+    } while(letters > []);
+  };
+
   boggle.findWords = function (wordList, letterGrid) {
     var foundWords = [],
         incompleteWords = [],
-        self = this,
-        columnIndex,
-        letters,
-        reverseWordList;
+        self = this;
 
-    reverseWordList = wordList.map(function (w) {
-      return w.split("").reverse().join("");
+    letterGrid.forEach(function (letter) {
+      self._seedIncompleteWords(incompleteWords, wordList, letter);
     });
 
     letterGrid.forEach(function (letter, letterGridIndex) {
@@ -129,35 +130,20 @@ this.boggle = this.boggle || {};
             letterGridIndex
         )) {
 
+          debugger
           if(incompleteWord.isNextLetter(letter, wordList)) {
-            // word = incompleteWords[index] += letter;
             incompleteWord.appendLetter(letter);
-          } else if (incompleteWord.isNextLetter(letter, reverseWordList)) {
-            // word = incompleteWords[index] = letter + word;
+          } else if (incompleteWord.isPrevLetter(letter, wordList)) {
             incompleteWord.prependLetter(letter);
           }
 
           if(incompleteWord.isInList(wordList) &&
             !incompleteWord.isInList(foundWords)) {
-            // TODO: just use Array#push and Array#sort
-            // foundWords = self._insertAlphabetically(word, foundWords);
             foundWords.push(incompleteWord.toWord());
           }
         }
       });
 
-      columnIndex = 0;
-      do {
-        letters = self._lettersForColumn(columnIndex, wordList);
-        if(~letters.indexOf(letter)) {
-          // TODO: store column index along with letter
-          // TODO: just use Array#push and Array#sort
-          // incompleteWords = 
-          //    self._insertAlphabetically(letter, incompleteWords);
-          incompleteWords.push(new IncompleteWord(letter, columnIndex));
-        }
-        columnIndex++;
-      } while(letters > []);
     });
 
     return foundWords;
