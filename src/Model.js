@@ -24,7 +24,7 @@ this.boggle = this.boggle || {};
   IncompleteWord.prototype.isNextLetter = function (letter, wordList) {
     var word, truncWordList, self;
     self = this;
-    word = this.toWord() + letter;
+    word = this.toString() + letter;
     truncWordList = wordList.map(function (w) {
       return w.slice(self.letters[0].index, self.last().index + 2);
     });
@@ -34,7 +34,7 @@ this.boggle = this.boggle || {};
   IncompleteWord.prototype.isPrevLetter = function (letter, wordList) {
     var word, truncWordList, self;
     self = this;
-    word = letter + this.toWord();
+    word = letter + this.toString();
     truncWordList = wordList.map(function (w) {
       return w.slice(self.letters[0].index - 1, self.last().index + 1);
     });
@@ -49,14 +49,14 @@ this.boggle = this.boggle || {};
     this.letters.push({letter: letter, index: this.last().index + 1});
   };
 
-  IncompleteWord.prototype.toWord = function () {
+  IncompleteWord.prototype.toString = function () {
     return this.letters.map(function (el) {
       return el.letter;
     }).join("");
   };
 
   IncompleteWord.prototype.isInList = function (list) {
-    return list.indexOf(this.toWord()) !== -1;
+    return list.indexOf(this.toString()) !== -1;
   };
 
   boggle._lettersForColumn = function (columnIndex, wordList) {
@@ -148,12 +148,10 @@ this.boggle = this.boggle || {};
 
         if(incompleteWord.isInList(wordList) &&
           !incompleteWord.isInList(foundWords)) {
-          foundWords.push(incompleteWord.toWord());
+          foundWords.push(incompleteWord.toString());
         }
       });
-
     });
-
     return foundWords;
   };
 })(this.boggle);

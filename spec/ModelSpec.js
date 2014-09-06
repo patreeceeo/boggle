@@ -12,7 +12,7 @@ describe("boggle.findWords", function() {
     this.wordList = [
       // "aardvark",
       // "bee",
-      "bees",
+      // "bees",
       // "monk",
       // "monks",
       "zebra"
@@ -96,6 +96,18 @@ describe("boggle.findWords", function() {
 
     expect(boggle.findWords(this.wordList, letterGrid))
       .toEqual(["bees", "zebra"]);
+  });
+
+  it("finds words like this", function () {
+    var letterGrid = [
+      " ", " ", " ", "a",
+      "z", "e", "b", "r",
+      " ", " ", " ", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual(["zebra"]);
   });
 
   it("does not find repeated-cell words", function () {
