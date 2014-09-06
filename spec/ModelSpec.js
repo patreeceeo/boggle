@@ -12,10 +12,10 @@ describe("boggle.findWords", function() {
     this.wordList = [
       // "aardvark",
       // "bee",
-      // "bees",
-      "monk",
+      "bees",
+      // "monk",
       // "monks",
-      // "zebra"
+      "zebra"
     ];
   });
 

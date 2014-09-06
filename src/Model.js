@@ -9,6 +9,10 @@ this.boggle = this.boggle || {};
     this.letters = [{letter: letter, index: index}];
   };
 
+  IncompleteWord.prototype.firstLetter = function () {
+    return this.letters[0].letter;
+  };
+
   IncompleteWord.prototype.lastLetter = function () {
     return this.letters[this.letters.length - 1].letter;
   };
@@ -129,18 +133,22 @@ this.boggle = this.boggle || {};
             letterGrid,
             letterGridIndex
         )) {
-
-          debugger
           if(incompleteWord.isNextLetter(letter, wordList)) {
             incompleteWord.appendLetter(letter);
-          } else if (incompleteWord.isPrevLetter(letter, wordList)) {
+          }
+        } else if(self._isAdjacentLetterInGrid(
+            incompleteWord.firstLetter(), 
+            letterGrid,
+            letterGridIndex
+        )) {
+          if (incompleteWord.isPrevLetter(letter, wordList)) {
             incompleteWord.prependLetter(letter);
           }
+        }
 
-          if(incompleteWord.isInList(wordList) &&
-            !incompleteWord.isInList(foundWords)) {
-            foundWords.push(incompleteWord.toWord());
-          }
+        if(incompleteWord.isInList(wordList) &&
+          !incompleteWord.isInList(foundWords)) {
+          foundWords.push(incompleteWord.toWord());
         }
       });
 
