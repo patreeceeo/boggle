@@ -1,0 +1,33 @@
+
+body {
+  font-family: monospace;
+}
+
+.Block {
+  display: inline-block;
+}
+
+.u-width1 {
+  width: 1rem;
+}
+.u-width2 {
+  width: 2rem;
+}
+.u-width3 {
+  width: 3rem;
+}
+.u-width4 {
+  width: 4rem;
+}
+.u-height1 {
+  height: 1rem;
+}
+.u-height2 {
+  height: 2rem;
+}
+.u-height3 {
+  height: 3rem;
+}
+.u-height4 {
+  height: 4rem;
+}
