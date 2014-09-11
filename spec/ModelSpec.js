@@ -176,34 +176,38 @@ describe("boggle._lettersForColumn", function () {
   });
 });
 
-// describe("boggle._insertAlphabetically", function () {
-//   "use strict";
+describe("boggle._chooseLetter", function () {
+  "use strict";
+  it("chooses a letter based on relative frequency in language", function () {
+    var letter1, 
+        letter1Count = 0,
+        letterNot1Count = 0,
+        frequency = 0,
+        testCount = 100000,
+        testIndex = 0,
+        frequencyExpected; 
 
-//   beforeEach(function () {
-//     this.wordList = [
-//       "aardvark",
-//       "bee",
-//       "bees",
-//       "monk",
-//       "monks",
-//       "zebra"
-//     ];
-//   });
+    // Choose random-ish letter;
+    letter1 = boggle._chooseLetter();
+        
+    // Re-define random to be not at all random
+    boggle.random = function (min, max) {
+      return ((max - min) / testCount) * testIndex;
+    };
 
-//   it("inserts words into a word list in alphabetical order", function () {
-//     var newWordList;
+    frequencyExpected = boggle._letterFrequencies.en[letter1]; 
 
-//     newWordList = 
-//      boggle._insertAlphabetically("icecream", this.wordList);      
+    for(testIndex = 0; testIndex < testCount; testIndex++) {
+      var letter = boggle._chooseLetter();
+      if(letter === letter1) {
+        letter1Count++;
+      } else {
+        letterNot1Count++;
+      }
+    }
 
-//     expect(newWordList).toEqual([
-//       "aardvark",
-//       "bee",
-//       "bees",
-//       "icecream",
-//       "monk",
-//       "monks",
-//       "zebra"
-//     ]);
-//   });
-// });
+    frequency = letter1Count / (testCount / 100);
+    frequency = Math.round(frequency * 100) / 100;
+    expect(frequency).toEqual(frequencyExpected);
+  });
+});

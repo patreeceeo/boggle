@@ -2,74 +2,6 @@ this.boggle = this.boggle || {};
 
 (function(boggle) {
   "use strict";
-
-  var IncompleteWord;
-
-  IncompleteWord = function (letter, index, x, y) {
-    this.letters = [{letter: letter, index: index, x: x, y: y}];
-  };
-
-  IncompleteWord.prototype.firstLetter = function () {
-    return this.letters[0].letter;
-  };
-
-  IncompleteWord.prototype.lastLetter = function () {
-    return this.letters[this.letters.length - 1].letter;
-  };
-
-  IncompleteWord.prototype.last = function () {
-    return this.letters[this.letters.length - 1];
-  };
-
-  IncompleteWord.prototype.first = function () {
-    return this.letters[0];
-  };
-
-  IncompleteWord.prototype.isSuffix = function (incompleteWord, wordList) {
-    var word, truncWordList, self;
-    self = this;
-    word = "" + this + incompleteWord;
-    truncWordList = wordList.map(function (w) {
-      return w.slice(self.first().index, incompleteWord.last().index + 2);
-    });
-    return truncWordList.indexOf(word) != -1;
-  };
- 
-  IncompleteWord.prototype.isPrefix = function (incompleteWord, wordList) {
-    var word, truncWordList, self;
-    self = this;
-    word = "" + incompleteWord + this;
-    truncWordList = wordList.map(function (w) {
-      return w.slice(incompleteWord.first().index - 1, self.last().index + 1);
-    });
-    return truncWordList.indexOf(word) != -1;
-  };
-
-  IncompleteWord.prototype.clone = function (letters) {
-    var clone;
-    clone = new IncompleteWord();
-    clone.letters = letters;
-    return clone;
-  };
-
-  IncompleteWord.prototype.prepend = function (incompleteWord) {
-    return this.clone(incompleteWord.letters.concat(this.letters));
-  };
-
-  IncompleteWord.prototype.append = function (incompleteWord) {
-    return this.clone(this.letters.concat(incompleteWord.letters));
-  };
-
-  IncompleteWord.prototype.toString = function () {
-    return this.letters.map(function (el) {
-      return el.letter;
-    }).join("");
-  };
-
-  IncompleteWord.prototype.isInList = function (list) {
-    return list.indexOf(this.toString()) !== -1;
-  };
-
   boggle.options = {
     grid: {
       width: 4,
@@ -81,6 +13,14 @@ this.boggle = this.boggle || {};
     var i;
     for(i = 0; i < array.length; i++) {
       fn.call(this, array[i], i);
+    }
+  };
+
+  boggle.forEachKeyValue = function (object, fn) {
+    for(var key in object) {
+      if(object.hasOwnProperty(key)) {
+        fn.call(this, key, object[key]);
+      }
     }
   };
 
@@ -98,18 +38,6 @@ this.boggle = this.boggle || {};
     after = wordList.slice(index, wordList.length);
     return before.concat([word], after);
   };
-
-  boggle._indexesOf = function (letter, word) {
-    var indexes;
-    indexes = [];
-    this.forEach(word, function (l, index) {
-      if(l === letter) {
-        indexes.push(index);
-      }
-    });
-    return indexes;
-  };
-
 
   boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
     var xdif, ydif, width, height;
@@ -139,7 +67,7 @@ this.boggle = this.boggle || {};
       letters = this._lettersForColumn(columnIndex, wordList);
       if(~letters.indexOf(letter)) {
         incompleteWords.push(
-          new IncompleteWord(
+          new boggle.IncompleteWord(
             letter, 
             columnIndex,
             gridIndex % boggle.options.grid.width,
@@ -192,4 +120,77 @@ this.boggle = this.boggle || {};
     });
     return foundWords;
   };
+
+  boggle._letterFrequencies = {
+    en: {
+      E: 12.02,
+      T: 9.10,
+      A: 8.12,
+      O: 7.68,
+      I: 7.31,
+      N: 6.95,
+      S: 6.28,
+      R: 6.02,
+      H: 5.92,
+      D: 4.32,
+      L: 3.98,
+      U: 2.88,
+      C: 2.71,
+      M: 2.61,
+      F: 2.30,
+      Y: 2.11,
+      W: 2.09,
+      G: 2.03,
+      P: 1.82,
+      B: 1.49,
+      V: 1.11,
+      K: 0.69,
+      X: 0.17,
+      Q: 0.11,
+      J: 0.10,
+      Z: 0.07
+    }
+  };
+
+  boggle._buildLetterBank = function () {
+    if(this._letterBank == null) {
+      this._letterBank = [];
+      var total = 0;
+      boggle.forEachKeyValue(this._letterFrequencies.en, function (key, value) {
+        this._letterBank.push({letter: key, min: total, max: total + value}); 
+        total += value;
+      });
+    }
+  };
+
+  boggle.random = function (min, max) {
+    return Math.random() * max + min;
+  };
+
+  boggle._chooseLetter = function () {
+    boggle._buildLetterBank();
+    var max = this._letterBank[this._letterBank.length - 1].max,
+        choice,
+        letter;
+    choice = boggle.random(0, max);
+    boggle.forEach(this._letterBank, function (letterInfo) {
+      if(letterInfo.min <= choice && letterInfo.max > choice) {
+        letter = letterInfo.letter;
+      }
+    });
+    return letter;
+  };
+
+  boggle.createLetterGrid = function () {
+    var letterGrid = [],
+        width = boggle.options.grid.width,
+        height = boggle.options.grid.height;
+    
+    for(var i = 0; i < width * height; i++) {
+      letterGrid.push(this._chooseLetter());
+    }
+    return letterGrid;
+  };
+
+
 })(this.boggle);

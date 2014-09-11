@@ -1,13 +1,14 @@
+/* global jasmine */
+/* global beforeEach */
 beforeEach(function () {
+  "use strict";
   jasmine.addMatchers({
-    toBePlaying: function () {
+    toBeAtMost: function () {
       return {
         compare: function (actual, expected) {
-          var player = actual;
-
           return {
-            pass: player.currentlyPlayingSong === expected && player.isPlaying
-          }
+            pass: actual <= expected
+          };
         }
       };
     }
