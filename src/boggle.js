@@ -56,6 +56,11 @@ this.boggle = this.boggle || {};
            xdif === 1 && ydif === 1;
   };
 
+  boggle.isLetterForColumn = function (letter, columnIndex, wordList) {
+    var letters = this._lettersForColumn(columnIndex, wordList);
+    return ~letters.indexOf(letter);
+  };
+
   boggle._seedIncompleteWord = function (
       incompleteWords, 
       wordList, 
