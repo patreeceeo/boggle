@@ -123,8 +123,7 @@ this.boggle = this.boggle || {};
       incompleteWord1.last().y - 
       incompleteWord2.first().y
     );
-    return xdif === 0 && ydif === 0 ||
-           xdif === 0 && ydif === 1 ||
+    return xdif === 0 && ydif === 1 ||
            xdif === 1 && ydif === 0 ||
            xdif === 1 && ydif === 1;
   };

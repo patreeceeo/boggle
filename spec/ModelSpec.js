@@ -88,17 +88,17 @@ describe("boggle.findWords", function() {
 
   it("finds intersecting words", function () {
     var letterGrid = [
-      "b", " ", " ", "a",
+      " ", "b", " ", "a",
       "z", "e", "b", "r",
-      " ", " ", "e", " ",
-      " ", " ", " ", "s",
+      " ", "e", " ", " ",
+      " ", " ", " ", " ",
     ];
 
     expect(boggle.findWords(this.wordList, letterGrid))
-      .toEqual(["bees", "zebra"]);
+      .toEqual(["bee", "zebra"]);
   });
 
-  it("finds words like this", function () {
+  it("finds up hook words", function () {
     var letterGrid = [
       " ", " ", " ", "a",
       "z", "e", "b", "r",
