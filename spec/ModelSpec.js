@@ -11,6 +11,7 @@ describe("boggle.findWords", function() {
   beforeEach(function () {
     this.wordList = [
       "aardvark",
+      "aardvarks",
       "bee",
       "bees",
       "monk",
@@ -120,6 +121,18 @@ describe("boggle.findWords", function() {
 
     expect(boggle.findWords(this.wordList, letterGrid))
       .toEqual([]);
+  });
+
+  it("finds spiral words", function () {
+    var letterGrid = [
+      "a", "k", "r", " ",
+      "a", "s", "a", " ",
+      "r", "d", "v", " ",
+      " ", " ", " ", " ",
+    ];
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual(["aardvark", "aardvarks"]);
   });
  
   it("does not find non-continuous words", function () {
