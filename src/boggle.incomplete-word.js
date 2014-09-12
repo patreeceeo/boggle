@@ -25,23 +25,38 @@ this.boggle = this.boggle || {};
     return this.letters[0];
   };
 
+  IncompleteWord.getTruncWordList = function (wordList, index1, index2) {
+    this._truncWordListMap = this._truncWordListMap || {};
+    var truncWordList = this._truncWordListMap["" + index1 + index2];
+    if(truncWordList == null) {
+      truncWordList = wordList.map(function (w) {
+        return w.slice(index1, index2);
+      });
+    }
+    return truncWordList;
+  };
+
   IncompleteWord.prototype.isSuffix = function (incompleteWord, wordList) {
     var word, truncWordList, self;
     self = this;
     word = "" + this + incompleteWord;
-    truncWordList = wordList.map(function (w) {
-      return w.slice(self.first().index, incompleteWord.last().index + 2);
-    });
+    truncWordList = IncompleteWord.getTruncWordList(
+        wordList, 
+        self.first().index,
+        incompleteWord.last().index + 2
+    );
     return truncWordList.indexOf(word) != -1;
   };
- 
+
   IncompleteWord.prototype.isPrefix = function (incompleteWord, wordList) {
     var word, truncWordList, self;
     self = this;
     word = "" + incompleteWord + this;
-    truncWordList = wordList.map(function (w) {
-      return w.slice(incompleteWord.first().index - 1, self.last().index + 1);
-    });
+    truncWordList = IncompleteWord.getTruncWordList(
+        wordList, 
+        incompleteWord.first().index - 1, 
+        self.last().index + 1
+    );
     return truncWordList.indexOf(word) != -1;
   };
 

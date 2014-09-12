@@ -10,9 +10,12 @@ this.boggle = this.boggle || {};
   };
 
   boggle.forEach = function (array, fn) {
-    var i;
+    var i, retval;
     for(i = 0; i < array.length; i++) {
-      fn.call(this, array[i], i);
+      retval = fn.call(this, array[i], i);
+      if(retval) {
+        return retval;
+      }
     }
   };
 
