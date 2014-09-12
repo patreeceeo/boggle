@@ -1,6 +1,6 @@
 this.boggle = this.boggle || {};
 
-(function(boggle) {
+(function(boggle, Backbone) {
   "use strict";
   boggle.options = {
     grid: {
@@ -197,5 +197,7 @@ this.boggle = this.boggle || {};
     return letterGrid;
   };
 
+  boggle.Model = Backbone.Model;
+  boggle.Collection = Backbone.Collection;
 
-})(this.boggle);
+})(this.boggle, this.Backbone);

@@ -7,6 +7,13 @@ body {
   display: inline-block;
 }
 
+.Typewritter-cursor {
+  color: gray;
+}
+
+.u-widthHalf {
+  width: 0.5rem;
+}
 .u-width1 {
   width: 1rem;
 }
@@ -30,4 +37,8 @@ body {
 }
 .u-height4 {
   height: 4rem;
+}
+
+.u-hidden {
+  visibility: hidden;
 }
