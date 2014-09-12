@@ -120,6 +120,7 @@ this.boggle = this.boggle || {};
         if(incompleteWordInner.isInList(wordList) &&
           !incompleteWordInner.isInList(foundWords)) {
           foundWords.push(incompleteWordInner.toString());
+          console.count("Found a word!");
         }
       });
     });
@@ -199,5 +200,24 @@ this.boggle = this.boggle || {};
 
   boggle.Model = Backbone.Model;
   boggle.Collection = Backbone.Collection;
+  boggle.LetterCollection = boggle.Collection.extend({
+    toString: function () {
+      return this.reduce(function (memo, model) {
+        return memo + model.get("letter");
+      }, "");
+    }
+  });
+  boggle.WordCollection = boggle.Collection.extend({
+    contains: function (word) {
+      return this.filter(function (model) {
+        return word.toUpperCase() === model.get("word");
+      }, this).length > 0;
+    },
+    addWords: function (words) {
+      this.add(words.map(function (word) {
+        return {word: word.toUpperCase()};
+      }));
+    }
+  });
 
 })(this.boggle, this.Backbone);

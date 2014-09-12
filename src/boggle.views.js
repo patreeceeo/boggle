@@ -77,8 +77,10 @@ this.boggle = this.boggle || {};
   });
 
   views.Typewritter = views.Base.extend({
-    initialize: function () {
+    initialize: function (options) {
       this._super("initialize");
+      this.answers = options.answers;
+      this.correctAnswers = options.correctAnswers;
       _.bindAll(this, "_keyPressed", "_keyDowned");
       document.body.addEventListener("keypress", this._keyPressed);
       document.body.addEventListener("keydown", this._keyDowned);
@@ -96,7 +98,8 @@ this.boggle = this.boggle || {};
     collectionEvents: {
       "add remove reset": "render"
     },
-    _keyPressed: function (e) {
+    _keyPressed: function () {},
+    _keyDowned: function (e) {
       e.preventDefault();
       var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
           letter;
@@ -107,14 +110,19 @@ this.boggle = this.boggle || {};
       if(e.keyCode >= 97 && e.keyCode <= 122) {
         letter = abc[e.keyCode - 97];
       }
+      if(e.keyCode === 13) {
+        var word = "" + this.collection;
+        if(this.correctAnswers.contains(word) && !this.answers.contains(word)) {
+          this.answers.addWords([word]);
+        }
+      }
 
       if(letter != null) {
         this.collection.push({
           letter: letter
         });
       }
-    },
-    _keyDowned: function (e) {
+
       if(e.keyCode === 8) {
         if(e.metaKey) {
           this.collection.reset();
