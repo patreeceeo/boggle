@@ -8,15 +8,9 @@ this.boggle = this.boggle || {};
     "BAT",
     "CAVE",
     "HOLY",
-    "CAT",
-    "EAT",
-    "AT",
-    "MY",
-    "LEG",
-    "PEN",
-    "TIE",
+    "COW",
   ];
-  boggle.masterWordList.en =
+  // boggle.masterWordList.en =
 [
   "AARDVARK",
   "ACHOO",

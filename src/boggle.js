@@ -1,7 +1,7 @@
 this.boggle = this.boggle || {};
 
 (function(boggle, Backbone) {
-  "use strict";
+  "use strict";  
   boggle.options = {
     grid: {
       width: 4,
@@ -27,21 +27,6 @@ this.boggle = this.boggle || {};
     }
   };
 
-  boggle._lettersForColumn = function (columnIndex, wordList) {
-    return wordList.filter(function(word) {
-      return word.length > columnIndex;
-    }).map(function (word) {
-      return word[columnIndex];
-    });
-  };
-
-  boggle._insert = function (word, wordList, index) {
-    var before, after;
-    before = wordList.slice(0, index);
-    after = wordList.slice(index, wordList.length);
-    return before.concat([word], after);
-  };
-
   boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
     var xdif, ydif, width, height;
     width = boggle.options.grid.width;
@@ -59,32 +44,26 @@ this.boggle = this.boggle || {};
            xdif === 1 && ydif === 1;
   };
 
-  boggle.isLetterForColumn = function (letter, columnIndex, wordList) {
-    var letters = this._lettersForColumn(columnIndex, wordList);
-    return ~letters.indexOf(letter);
-  };
-
   boggle._seedIncompleteWord = function (
       incompleteWords, 
       wordList, 
       letter, 
       gridIndex) {
-    var letters, columnIndex;
-    columnIndex = 0;
-    do {
-      letters = this._lettersForColumn(columnIndex, wordList);
-      if(~letters.indexOf(letter)) {
-        incompleteWords.push(
-          new boggle.IncompleteWord(
-            letter, 
-            columnIndex,
-            gridIndex % boggle.options.grid.width,
-            Math.floor(gridIndex / boggle.options.grid.height)
-          )
-        );
-      }
-      columnIndex++;
-    } while(letters > []);
+    this.forEach(wordList, function (word) {
+      this.forEach(word, function (l, columnIndex) {
+        if(letter === l) {
+          incompleteWords.push(
+            new boggle.IncompleteWord(
+              letter, 
+              columnIndex,
+              word,
+              gridIndex % boggle.options.grid.width,
+              Math.floor(gridIndex / boggle.options.grid.height)
+            )
+          );
+        }
+      });
+    });
   };
 
   boggle.findWords = function (wordList, letterGrid) {
@@ -100,6 +79,10 @@ this.boggle = this.boggle || {};
       );
     });
 
+    incompleteWords.sort(function (iw1, iw2) {
+      return iw1.first().index - iw2.first().index;
+    });
+
     this.forEach(incompleteWords, function (incompleteWordOuter) {
       this.forEach(incompleteWords, function (incompleteWordInner) {
         if(this._areAdjacent(
@@ -107,23 +90,23 @@ this.boggle = this.boggle || {};
           incompleteWordOuter
         )) {
           if(incompleteWordInner.isSuffix(incompleteWordOuter, wordList)) {
-            incompleteWords.push(
-              incompleteWordInner.append(incompleteWordOuter));
+            incompleteWordInner.append(incompleteWordOuter);
+            incompleteWords[incompleteWords.length] = incompleteWordInner;
           }
         } else if(this._areAdjacent(
           incompleteWordOuter,
           incompleteWordInner
         )) {
           if (incompleteWordInner.isPrefix(incompleteWordOuter, wordList)) {
-            incompleteWords.push(
-              incompleteWordInner.prepend(incompleteWordOuter));
+            incompleteWordInner.prepend(incompleteWordOuter);
+            incompleteWords[incompleteWords.length] = incompleteWordInner;
           }
         }
 
         if(incompleteWordInner.isInList(wordList) &&
           !incompleteWordInner.isInList(foundWords)) {
           foundWords.push(incompleteWordInner.toString());
-          console.count("Found a word!");
+          // console.count("Found a word! " + incompleteWordInner);
         }
       });
     });

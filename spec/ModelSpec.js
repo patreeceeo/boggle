@@ -148,34 +148,6 @@ describe("boggle.findWords", function() {
   });
 });
 
-describe("boggle._lettersForColumn", function () {
-  "use strict"; 
-
-  beforeEach(function () {
-    this.wordList = [
-      "aardvark",
-      "bee",
-      "bees",
-      "monk",
-      "monks",
-      "zebra"
-    ];
-  });
-
-  it("finds all letters for a given column in a list of words", function () {
-    var letters;
-
-    letters = boggle._lettersForColumn(0, this.wordList);
-    expect(letters).toEqual(["a", "b", "b", "m", "m", "z"]);
-
-    letters = boggle._lettersForColumn(3, this.wordList);
-    expect(letters).toEqual(["d", "s", "k", "k", "r"]);
-
-    letters = boggle._lettersForColumn(5, this.wordList);
-    expect(letters).toEqual(["a"]);
-  });
-});
-
 describe("boggle._chooseLetter", function () {
   "use strict";
   it("chooses a letter based on relative frequency in language", function () {
