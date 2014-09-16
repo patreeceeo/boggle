@@ -121,6 +121,23 @@ this.boggle = this.boggle || {};
     return incompleteWords;
   };
 
+  boggle._binSearch = function (list, needle) {
+    var index = Math.round(list.length / 2),
+        jump = Math.round(list.length / 4);
+
+    while(index > -1 && index < list.length) {
+      if(needle == list[index]) {
+        return index;
+      } else if(needle < list[index]) {
+        index = Math.round(index - jump);
+      } else {
+        index = Math.round(index + jump);
+      }
+      jump = Math.max(1, jump / 2);
+    }
+    return -1;
+  };
+
   boggle.findWords = function (wordList, letterGrid) {
     var foundWords = [],
         incompleteWords;

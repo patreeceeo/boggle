@@ -85,7 +85,11 @@ this.boggle = this.boggle || {};
   };
 
   IncompleteWord.prototype.isInList = function (list) {
-    return list.indexOf(this.toString()) !== -1;
+    if(list.length < 10000) {
+      return list.indexOf(this.toString()) !== -1;
+    } else {
+      boggle._binSearch(list, this.toString()) !== -1;
+    }
   };
 
   IncompleteWord.prototype.trapped = function () {

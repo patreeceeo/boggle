@@ -183,3 +183,13 @@ describe("boggle._chooseLetter", function () {
     expect(frequency).toEqual(frequencyExpected);
   });
 });
+
+describe("boggle._binSearch", function () {
+  "use strict";
+  it("finds words in a alphabetically sorted list", function () {
+    var list = ["APPLE", "BANANA", "CACTUS", "DANDILION", "EGGPLANT"];
+    expect(boggle._binSearch(list, "APPLE")).toEqual(0);
+    expect(boggle._binSearch(list, "EGGPLANT")).toEqual(4);
+    expect(boggle._binSearch(list, "CACTUS")).toEqual(2);
+  });
+});
