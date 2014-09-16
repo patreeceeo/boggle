@@ -27,10 +27,14 @@ this.boggle = this.boggle || {};
     }
   };
 
+  boggle.mergeTrue = function (dest, src) {
+    this.forEachKeyValue(src, function (key) {
+      dest[key] = dest[key] || src[key];
+    });
+  };
+
   boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
-    var xdif, ydif, width, height;
-    width = boggle.options.grid.width;
-    height = boggle.options.grid.height;
+    var xdif, ydif;
     xdif = Math.abs(
       incompleteWord1.last().x - 
       incompleteWord2.first().x
@@ -44,7 +48,38 @@ this.boggle = this.boggle || {};
            xdif === 1 && ydif === 1;
   };
 
-  boggle._seedIncompleteWord = function (
+  boggle._getAdjacency = function (incompleteWord1, incompleteWord2) {
+    var xdif, ydif, xdifa, ydifa, north, south, east, west;
+    xdif = incompleteWord1.last().x - 
+           incompleteWord2.first().x;
+    ydif = incompleteWord1.last().y - 
+           incompleteWord2.first().y;
+    xdifa = Math.abs(xdif);
+    ydifa = Math.abs(ydif);
+
+    north = ydif === -1;
+    south = ydif === 1;
+    east = xdif === 1;
+    west = xdif === -1;
+
+    return {
+      areAdjacent: xdifa === 0 && ydifa === 1 ||
+                   xdifa === 1 && ydifa === 0 ||
+                   xdifa === 1 && ydifa === 1,
+      direction: {
+        north: north && !east && !west,
+        northEast: north && east,
+        east: east && !north && !south,
+        southEast: south && east,
+        south: south && !east && !west,
+        southWest: south && west,
+        west: west && !north && !south,
+        northWest: north && west
+      }
+    };
+  };
+
+  boggle._seedIncompleteWords = function (
       incompleteWords, 
       wordList, 
       letter, 
@@ -71,7 +106,7 @@ this.boggle = this.boggle || {};
         incompleteWords = [];
 
     this.forEach(letterGrid, function (letter, gridIndex) {
-      this._seedIncompleteWord(
+      this._seedIncompleteWords(
         incompleteWords, 
         wordList, 
         letter, 
@@ -83,30 +118,54 @@ this.boggle = this.boggle || {};
       return iw1.first().index - iw2.first().index;
     });
 
-    this.forEach(incompleteWords, function (incompleteWordOuter) {
-      this.forEach(incompleteWords, function (incompleteWordInner) {
-        if(this._areAdjacent(
-          incompleteWordInner,
+    this.forEach(incompleteWords, function (incompleteWordOuter, indexOuter) {
+      if(incompleteWordOuter == null) {
+        return;
+      }
+      this.forEach(incompleteWords, function (incompleteWordInner, indexInner) {
+        if(incompleteWordInner == null) {
+          return;
+        }
+        var ajacencyInOut = this._getAdjacency(
+          incompleteWordInner, 
           incompleteWordOuter
-        )) {
+        );
+        var ajacencyOutIn = this._getAdjacency(
+          incompleteWordOuter,
+          incompleteWordInner 
+        );
+        if(ajacencyInOut.areAdjacent) {
           if(incompleteWordInner.isSuffix(incompleteWordOuter, wordList)) {
             incompleteWordInner.append(incompleteWordOuter);
             incompleteWords[incompleteWords.length] = incompleteWordInner;
+          } else {
+            this.mergeTrue(
+              incompleteWordInner.last().trapped, 
+              ajacencyInOut.direction
+            );
+            if(incompleteWordInner.trapped()) {
+              delete incompleteWords[indexInner]; 
+            }
           }
-        } else if(this._areAdjacent(
-          incompleteWordOuter,
-          incompleteWordInner
-        )) {
+        } else if(ajacencyOutIn.areAdjacent) {
           if (incompleteWordInner.isPrefix(incompleteWordOuter, wordList)) {
             incompleteWordInner.prepend(incompleteWordOuter);
             incompleteWords[incompleteWords.length] = incompleteWordInner;
+          } else {
+            this.mergeTrue(
+                incompleteWordOuter.last().trapped, 
+                ajacencyOutIn.direction
+            );
+            if(incompleteWordOuter.trapped()) {
+              delete incompleteWords[indexOuter]; 
+            }
           }
+
         }
 
         if(incompleteWordInner.isInList(wordList) &&
           !incompleteWordInner.isInList(foundWords)) {
           foundWords.push(incompleteWordInner.toString());
-          // console.count("Found a word! " + incompleteWordInner);
         }
       });
     });

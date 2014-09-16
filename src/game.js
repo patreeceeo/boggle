@@ -9,11 +9,13 @@
   game.state.guessLetters = new boggle.LetterCollection();
   game.state.correctAnswers = new boggle.WordCollection();
   console.profile("findWords");
+  console.time("findWords");
   game.state.correctAnswers.addWords(boggle.findWords(
       boggle.masterWordList.en, 
       game.state.letterGrid
   ));
   console.profileEnd("findWords");
+  console.timeEnd("findWords");
   game.state.answers = new boggle.WordCollection();
   // wait for page to load and render
   setTimeout(function () {

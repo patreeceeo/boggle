@@ -2,15 +2,15 @@ this.boggle = this.boggle || {};
 !(function (boggle) {
   "use strict";
   boggle.masterWordList = {};
-  boggle.masterWordList.en = [
-    "TO",
-    "THE",
-    "BAT",
-    "CAVE",
-    "HOLY",
-    "COW",
-  ];
-  // boggle.masterWordList.en =
+  // boggle.masterWordList.en = [
+  //   "TO",
+  //   "THE",
+  //   "BAT",
+  //   "CAVE",
+  //   "HOLY",
+  //   "COW",
+  // ];
+  boggle.masterWordList.en =
 [
   "AARDVARK",
   "ACHOO",

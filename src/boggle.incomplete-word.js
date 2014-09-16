@@ -6,7 +6,13 @@ this.boggle = this.boggle || {};
   var IncompleteWord;
   
   IncompleteWord = function (letter, index, word, x, y) {
-    this.letters = [{letter: letter, index: index, x: x, y: y}];
+    this.letters = [{
+      letter: letter, 
+      index: index, 
+      x: x, 
+      y: y,
+      trapped: {}
+    }];
     this.completeWord = word;
   };
 
@@ -24,19 +30,6 @@ this.boggle = this.boggle || {};
 
   IncompleteWord.prototype.first = function () {
     return this.letters[0];
-  };
-
-  IncompleteWord.getTruncWordList = function (wordList, index1, index2) {
-    this._truncWordListMap = this._truncWordListMap || {};
-    var truncWordList = this._truncWordListMap["" + index1 + index2];
-    if(truncWordList == null) {
-      truncWordList = wordList.map(function (w) {
-        return w.slice(index1, index2);
-      }).filter(function (w) {
-        return w.length == index2 - index1;
-      });
-    }
-    return truncWordList;
   };
 
   IncompleteWord.indexInSortedList = function (wordList, word) {
@@ -93,6 +86,23 @@ this.boggle = this.boggle || {};
 
   IncompleteWord.prototype.isInList = function (list) {
     return list.indexOf(this.toString()) !== -1;
+  };
+
+  IncompleteWord.prototype.trapped = function () {
+    var self = this;
+    var letterTrapped = function (letter) {
+      return letter.trapped.north && 
+             letter.trapped.northEast &&
+             letter.trapped.east &&
+             letter.trapped.southEast &&
+             letter.trapped.south &&
+             letter.trapped.southWest &&
+             letter.trapped.west &&
+             letter.trapped.northWest &&
+             letter.index !== self.completeWord.length - 1 &&
+             letter.index !== 0;
+    };
+    return letterTrapped(this.first()) && letterTrapped(this.last());
   };
 
   boggle.IncompleteWord = IncompleteWord;
