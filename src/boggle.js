@@ -28,9 +28,10 @@ this.boggle = this.boggle || {};
   };
 
   boggle.mergeTrue = function (dest, src) {
-    this.forEachKeyValue(src, function (key) {
+    var key;
+    for(key in src) {
       dest[key] = dest[key] || src[key];
-    });
+    }
   };
 
   boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
@@ -79,40 +80,33 @@ this.boggle = this.boggle || {};
     };
   };
 
-  boggle._seedIncompleteWords = function (
-      incompleteWords, 
-      wordList, 
-      letter, 
-      gridIndex) {
-    this.forEach(wordList, function (word) {
-      this.forEach(word, function (l, columnIndex) {
-        if(letter === l) {
-          incompleteWords.push(
-            new boggle.IncompleteWord(
-              letter, 
-              columnIndex,
-              word,
-              gridIndex % boggle.options.grid.width,
-              Math.floor(gridIndex / boggle.options.grid.height)
-            )
-          );
-        }
+  boggle._seedIncompleteWords = function (letterGrid, wordList) {
+    var incompleteWords = [];
+    this.forEach(letterGrid, function (letter, gridIndex) {
+      this.forEach(wordList, function (word) {
+        this.forEach(word, function (l, columnIndex) {
+          if(letter === l) {
+            incompleteWords.push(
+              new boggle.IncompleteWord(
+                letter, 
+                columnIndex,
+                word,
+                gridIndex % boggle.options.grid.width,
+                Math.floor(gridIndex / boggle.options.grid.height)
+              )
+            );
+          }
+        });
       });
     });
+    return incompleteWords;
   };
 
   boggle.findWords = function (wordList, letterGrid) {
     var foundWords = [],
-        incompleteWords = [];
+        incompleteWords;
 
-    this.forEach(letterGrid, function (letter, gridIndex) {
-      this._seedIncompleteWords(
-        incompleteWords, 
-        wordList, 
-        letter, 
-        gridIndex
-      );
-    });
+    incompleteWords = this._seedIncompleteWords(letterGrid, wordList);
 
     incompleteWords.sort(function (iw1, iw2) {
       return iw1.first().index - iw2.first().index;
