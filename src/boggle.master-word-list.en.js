@@ -10,7 +10,7 @@ this.boggle = this.boggle || {};
   //   "HOLY",
   //   "COW",
   // ];
-  boggle.masterWordList.en =
+  // boggle.masterWordList.en =
 [
   "AARDVARK",
   "ACHOO",
@@ -145,7 +145,7 @@ this.boggle = this.boggle || {};
   "WINTERIZE",
   "WRITTEN"
 ];
-  // boggle.masterWordList.en =
+  boggle.masterWordList.en =
 [
 "AARDVARK",
 "ABACI",

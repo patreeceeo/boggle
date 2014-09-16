@@ -27,13 +27,6 @@ this.boggle = this.boggle || {};
     }
   };
 
-  boggle.mergeTrue = function (dest, src) {
-    var key;
-    for(key in src) {
-      dest[key] = dest[key] || src[key];
-    }
-  };
-
   boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
     var xdif, ydif;
     xdif = Math.abs(
@@ -138,9 +131,41 @@ this.boggle = this.boggle || {};
     return -1;
   };
 
+  boggle._unique = function (list) {
+    var hash = {},
+        retval = [];
+    for(var i = 0; i < list.length; i++) {
+      hash[list[i]] = list[i];
+    }
+    for(var key in hash) {
+      retval[retval.length] = key;
+    }
+    return retval;
+  };
+
+  boggle._filterWordsOfLetters = function(words, letters) {
+    return words.filter(function (word) {
+      var memo = true;
+      for(var i = 0; i < word.length; i++) {
+        memo = memo && letters.indexOf(word[i]) != -1;
+        if(!memo) {
+          break;
+        }
+      }
+      return memo;
+    });
+  };
+
   boggle.findWords = function (wordList, letterGrid) {
     var foundWords = [],
         incompleteWords;
+
+    var uniqueLetters = this._unique(letterGrid);
+
+    console.log("# words:", wordList.length);
+    wordList = boggle._filterWordsOfLetters(wordList, uniqueLetters);
+    console.log("# words:", wordList.length);
+    debugger
 
     incompleteWords = this._seedIncompleteWords(letterGrid, wordList);
 
@@ -174,10 +199,10 @@ this.boggle = this.boggle || {};
               this._oppositeDir(ajacencyInOut.direction)
             ] = true;
             if(incompleteWordInner.trapped()) {
-              delete incompleteWords[indexInner]; 
+              incompleteWords[indexInner] = null;
             }
             if(incompleteWordOuter.trapped()) {
-              delete incompleteWords[indexOuter]; 
+              incompleteWords[indexOuter] = null;
             }
           }
         } else if(ajacencyOutIn.areAdjacent) {
@@ -190,10 +215,10 @@ this.boggle = this.boggle || {};
               this._oppositeDir(ajacencyOutIn.direction)
             ] = true;
             if(incompleteWordOuter.trapped()) {
-              delete incompleteWords[indexOuter]; 
+              incompleteWords[indexOuter] = null;
             }
             if(incompleteWordInner.trapped()) {
-              delete incompleteWords[indexInner]; 
+              incompleteWords[indexInner] = null;
             }
           }
 
