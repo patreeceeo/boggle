@@ -67,17 +67,36 @@ this.boggle = this.boggle || {};
       areAdjacent: xdifa === 0 && ydifa === 1 ||
                    xdifa === 1 && ydifa === 0 ||
                    xdifa === 1 && ydifa === 1,
-      direction: {
-        north: north && !east && !west,
-        northEast: north && east,
-        east: east && !north && !south,
-        southEast: south && east,
-        south: south && !east && !west,
-        southWest: south && west,
-        west: west && !north && !south,
-        northWest: north && west
-      }
+      direction: north && !east && !west && "north" ||
+                 north && east && "northEast" ||
+                 east && !north && !south && "east" ||
+                 south && east && "southEast" ||
+                 south && !east && !west && "south" ||
+                 south && west && "southWest" ||
+                 west && !north && !south && "west" ||
+                 north && west && "northWest"
     };
+  };
+  
+  boggle._oppositeDir = function (dir) {
+    switch(dir) {
+      case "north":
+        return "south";
+      case "northEast":
+        return "southWest";
+      case "east":
+        return "west";
+      case "southEast":
+        return "northWest";
+      case "south":
+        return "north";
+      case "southWest":
+        return "northEast";
+      case "west":
+        return "east";
+      case "northWest":
+        return "southEast";
+    }
   };
 
   boggle._seedIncompleteWords = function (letterGrid, wordList) {
@@ -133,12 +152,15 @@ this.boggle = this.boggle || {};
             incompleteWordInner.append(incompleteWordOuter);
             incompleteWords[incompleteWords.length] = incompleteWordInner;
           } else {
-            this.mergeTrue(
-              incompleteWordInner.last().trapped, 
-              ajacencyInOut.direction
-            );
+            incompleteWordInner.last().trapped[ajacencyInOut.direction] = true;
+            incompleteWordOuter.first().trapped[
+              this._oppositeDir(ajacencyInOut.direction)
+            ] = true;
             if(incompleteWordInner.trapped()) {
               delete incompleteWords[indexInner]; 
+            }
+            if(incompleteWordOuter.trapped()) {
+              delete incompleteWords[indexOuter]; 
             }
           }
         } else if(ajacencyOutIn.areAdjacent) {
@@ -146,12 +168,15 @@ this.boggle = this.boggle || {};
             incompleteWordInner.prepend(incompleteWordOuter);
             incompleteWords[incompleteWords.length] = incompleteWordInner;
           } else {
-            this.mergeTrue(
-                incompleteWordOuter.last().trapped, 
-                ajacencyOutIn.direction
-            );
+            incompleteWordOuter.last().trapped[ajacencyOutIn.direction] = true;
+            incompleteWordInner.first().trapped[
+              this._oppositeDir(ajacencyOutIn.direction)
+            ] = true;
             if(incompleteWordOuter.trapped()) {
               delete incompleteWords[indexOuter]; 
+            }
+            if(incompleteWordInner.trapped()) {
+              delete incompleteWords[indexInner]; 
             }
           }
 
