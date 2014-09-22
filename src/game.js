@@ -28,9 +28,15 @@
     });
 
     typewritterView = new boggle.views.Typewritter({
-      collection: game.state.guessLetters,
-      correctAnswers: game.state.correctAnswers,
-      answers: game.state.answers
+      collection: game.state.guessLetters
+    });
+
+    typewritterView.on("enter", function (word) {
+      if(game.state.correctAnswers.contains(word) && 
+        !game.state.answers.contains(word)
+      ) {
+        game.state.answers.addWords([word]);
+      }
     });
 
     gameView = new boggle.views.Game({

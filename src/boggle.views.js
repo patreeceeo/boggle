@@ -77,10 +77,8 @@ this.boggle = this.boggle || {};
   });
 
   views.Typewritter = views.Base.extend({
-    initialize: function (options) {
+    initialize: function () {
       this._super("initialize");
-      this.answers = options.answers;
-      this.correctAnswers = options.correctAnswers;
       _.bindAll(this, "_keyPressed", "_keyDowned");
       document.body.addEventListener("keypress", this._keyPressed);
       document.body.addEventListener("keydown", this._keyDowned);
@@ -112,9 +110,8 @@ this.boggle = this.boggle || {};
       }
       if(e.keyCode === 13) {
         var word = "" + this.collection;
-        if(this.correctAnswers.contains(word) && !this.answers.contains(word)) {
-          this.answers.addWords([word]);
-        }
+        this.trigger("enter", word);
+        this.collection.reset();
       }
 
       if(letter != null) {
