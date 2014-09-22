@@ -27,206 +27,124 @@ this.boggle = this.boggle || {};
     }
   };
 
-  boggle._areAdjacent = function (incompleteWord1, incompleteWord2) {
-    var xdif, ydif;
-    xdif = Math.abs(
-      incompleteWord1.last().x - 
-      incompleteWord2.first().x
-    );
-    ydif = Math.abs(
-      incompleteWord1.last().y - 
-      incompleteWord2.first().y
-    );
-    return xdif === 0 && ydif === 1 ||
-           xdif === 1 && ydif === 0 ||
-           xdif === 1 && ydif === 1;
-  };
-
-  boggle._getAdjacency = function (incompleteWord1, incompleteWord2) {
-    var xdif, ydif, xdifa, ydifa, north, south, east, west;
-    xdif = incompleteWord1.last().x - 
-           incompleteWord2.first().x;
-    ydif = incompleteWord1.last().y - 
-           incompleteWord2.first().y;
-    xdifa = Math.abs(xdif);
-    ydifa = Math.abs(ydif);
-
-    north = ydif === -1;
-    south = ydif === 1;
-    east = xdif === 1;
-    west = xdif === -1;
-
-    return {
-      areAdjacent: xdifa === 0 && ydifa === 1 ||
-                   xdifa === 1 && ydifa === 0 ||
-                   xdifa === 1 && ydifa === 1,
-      direction: north && !east && !west && "north" ||
-                 north && east && "northEast" ||
-                 east && !north && !south && "east" ||
-                 south && east && "southEast" ||
-                 south && !east && !west && "south" ||
-                 south && west && "southWest" ||
-                 west && !north && !south && "west" ||
-                 north && west && "northWest"
+  boggle.map = function (array, fn) {
+    var i, retval = [], callback;
+    callback = function (el, i) {
+      fn.call(boggle, el, i);
     };
-  };
-  
-  boggle._oppositeDir = function (dir) {
-    switch(dir) {
-      case "north":
-        return "south";
-      case "northEast":
-        return "southWest";
-      case "east":
-        return "west";
-      case "southEast":
-        return "northWest";
-      case "south":
-        return "north";
-      case "southWest":
-        return "northEast";
-      case "west":
-        return "east";
-      case "northWest":
-        return "southEast";
+    if(typeof array.map === "function") {
+      return array.map(callback);
     }
-  };
-
-  boggle._seedIncompleteWords = function (letterGrid, wordList) {
-    var incompleteWords = [];
-    this.forEach(letterGrid, function (letter, gridIndex) {
-      this.forEach(wordList, function (word) {
-        this.forEach(word, function (l, columnIndex) {
-          if(letter === l) {
-            incompleteWords.push(
-              new boggle.IncompleteWord(
-                letter, 
-                columnIndex,
-                word,
-                gridIndex % boggle.options.grid.width,
-                Math.floor(gridIndex / boggle.options.grid.height)
-              )
-            );
-          }
-        });
-      });
-    });
-    return incompleteWords;
-  };
-
-  boggle._binSearch = function (list, needle) {
-    var index = Math.round(list.length / 2),
-        jump = Math.round(list.length / 4);
-
-    while(index > -1 && index < list.length) {
-      if(needle == list[index]) {
-        return index;
-      } else if(needle < list[index]) {
-        index = Math.round(index - jump);
-      } else {
-        index = Math.round(index + jump);
-      }
-      jump = Math.max(1, jump / 2);
-    }
-    return -1;
-  };
-
-  boggle._unique = function (list) {
-    var hash = {},
-        retval = [];
-    for(var i = 0; i < list.length; i++) {
-      hash[list[i]] = list[i];
-    }
-    for(var key in hash) {
-      retval[retval.length] = key;
+    for(i = 0; i < array.length; i++) {
+      retval[retval.length] = fn.call(this, array[i], i);
     }
     return retval;
   };
 
-  boggle._filterWordsOfLetters = function(words, letters) {
-    return words.filter(function (word) {
-      var memo = true;
-      for(var i = 0; i < word.length; i++) {
-        memo = memo && letters.indexOf(word[i]) != -1;
-        if(!memo) {
-          break;
+  boggle._adjacencyMap = [
+  /*  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F */
+    [ 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],		/* 0 */
+    [ 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],		/* 1 */
+    [ 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 ],		/* 2 */
+    [ 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 ],		/* 3 */
+    [ 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0 ],		/* 4 */
+    [ 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0 ],		/* 5 */
+    [ 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0 ],		/* 6 */
+    [ 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0 ],		/* 7 */
+    [ 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0 ],		/* 8 */
+    [ 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0 ],		/* 9 */
+    [ 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1 ],		/* A */
+    [ 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1 ],		/* B */
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0 ],		/* C */
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0 ],		/* D */
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1 ],		/* E */
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ]		/* F */
+  ];
+
+  boggle._findCubeIndexes = function (letter1, letter2, letterMap) {
+    var retval = [],
+        set1 = letterMap[letter1] || [],
+        set2 = letterMap[letter2] || [];
+
+    if(letter2 == null) {
+      return set1;
+    }
+
+    this.forEach(set1, function (index1) {
+      this.forEach(set2, function (index2) {
+        if(this._adjacencyMap[index1][index2]) {
+          retval[retval.length] = index1;
         }
-      }
-      return memo;
+      });
     });
+    return retval;
+  };
+
+  boggle._debug = function () {
+    // window.console.debug.apply(window.console, arguments);
+  };
+
+  boggle._findPath = function (paths, usedbits) {
+    var retval = -1;
+    this.forEach(paths, function (cubeIndexes, letterIndex) {
+      this._debug("remaining path length:", paths.length, "usedbits:", usedbits, 
+        "cubeIndexes:", cubeIndexes);
+      return this.forEach(cubeIndexes, function (cubeIndex) {
+        if((1 << cubeIndex) & usedbits) {
+        } else {
+          this._debug("choosing cubeIndex:", cubeIndex);
+          usedbits |= 1 << cubeIndex;
+          if(paths.length === 1) {
+            this._debug("eureka!");
+            retval = 1;
+          } else {
+            retval = this._findPath(paths.slice(letterIndex + 1), usedbits);
+            if(retval === 1) {
+              return 1;
+            }
+          }
+        }
+      }) || -1;
+    });
+    this._debug("backtracking, status:", retval);
+    return retval;
   };
 
   boggle.findWords = function (wordList, letterGrid) {
-    var foundWords = [],
-        incompleteWords;
+    var letterMap = {},
+        indexedWordList = {},
+        foundWords = [];
 
-    var uniqueLetters = this._unique(letterGrid);
-
-    console.log("# words:", wordList.length);
-    wordList = boggle._filterWordsOfLetters(wordList, uniqueLetters);
-    console.log("# words:", wordList.length);
-    debugger
-
-    incompleteWords = this._seedIncompleteWords(letterGrid, wordList);
-
-    incompleteWords.sort(function (iw1, iw2) {
-      return iw1.first().index - iw2.first().index;
+    boggle.forEach(letterGrid, function (letter, gridIndex) {
+      var gridIndexes = letterMap[letter] = letterMap[letter] || [];
+      gridIndexes[gridIndexes.length] = gridIndex;
     });
 
-    this.forEach(incompleteWords, function (incompleteWordOuter, indexOuter) {
-      if(incompleteWordOuter == null) {
-        return;
+    boggle.forEach(wordList, function (word) {
+      var letter = word[0],
+          wordListForLetter;
+
+      wordListForLetter = indexedWordList[letter] = indexedWordList[letter] || [];
+      if(letterMap[letter] != null) {
+        wordListForLetter[wordListForLetter.length] = word;
       }
-      this.forEach(incompleteWords, function (incompleteWordInner, indexInner) {
-        if(incompleteWordInner == null) {
-          return;
-        }
-        var ajacencyInOut = this._getAdjacency(
-          incompleteWordInner, 
-          incompleteWordOuter
-        );
-        var ajacencyOutIn = this._getAdjacency(
-          incompleteWordOuter,
-          incompleteWordInner 
-        );
-        if(ajacencyInOut.areAdjacent) {
-          if(incompleteWordInner.isSuffix(incompleteWordOuter, wordList)) {
-            incompleteWordInner.append(incompleteWordOuter);
-            incompleteWords[incompleteWords.length] = incompleteWordInner;
-          } else {
-            incompleteWordInner.last().trapped[ajacencyInOut.direction] = true;
-            incompleteWordOuter.first().trapped[
-              this._oppositeDir(ajacencyInOut.direction)
-            ] = true;
-            if(incompleteWordInner.trapped()) {
-              incompleteWords[indexInner] = null;
-            }
-            if(incompleteWordOuter.trapped()) {
-              incompleteWords[indexOuter] = null;
-            }
-          }
-        } else if(ajacencyOutIn.areAdjacent) {
-          if (incompleteWordInner.isPrefix(incompleteWordOuter, wordList)) {
-            incompleteWordInner.prepend(incompleteWordOuter);
-            incompleteWords[incompleteWords.length] = incompleteWordInner;
-          } else {
-            incompleteWordOuter.last().trapped[ajacencyOutIn.direction] = true;
-            incompleteWordInner.first().trapped[
-              this._oppositeDir(ajacencyOutIn.direction)
-            ] = true;
-            if(incompleteWordOuter.trapped()) {
-              incompleteWords[indexOuter] = null;
-            }
-            if(incompleteWordInner.trapped()) {
-              incompleteWords[indexInner] = null;
-            }
-          }
+    });
 
-        }
+    this.forEachKeyValue(indexedWordList, function (letter, wordListForLetter) {
+      this.forEach(wordListForLetter, function (word) {
+        var paths, usedbits = 0;
 
-        if(incompleteWordInner.isInList(wordList) &&
-          !incompleteWordInner.isInList(foundWords)) {
-          foundWords.push(incompleteWordInner.toString());
+        this._debug("current word:", word);
+
+        paths = this.map(word, function (letter, letterIndex) {
+          var nextLetter = word[letterIndex + 1];
+          return this._findCubeIndexes(letter, nextLetter, letterMap);
+        });
+
+        this._debug("paths:", paths);
+
+        if(this._findPath(paths, usedbits) === 1) {
+          foundWords[foundWords.length] = word;
         }
       });
     });
