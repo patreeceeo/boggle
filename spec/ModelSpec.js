@@ -16,6 +16,7 @@ describe("boggle.findWords", function() {
       "bees",
       "monk",
       "monks",
+      "tartar",
       "zebra"
     ];
   });
@@ -113,9 +114,9 @@ describe("boggle.findWords", function() {
 
   it("does not find repeated-cell words", function () {
     var letterGrid = [
-      "b", "e", "s", " ",
-      " ", " ", " ", " ",
-      " ", " ", " ", " ",
+      "t", "a", " ", " ",
+      "r", "t", " ", " ",
+      "a", " ", " ", " ",
       " ", " ", " ", " ",
     ];
 
@@ -148,48 +149,3 @@ describe("boggle.findWords", function() {
   });
 });
 
-describe("boggle._chooseLetter", function () {
-  "use strict";
-  it("chooses a letter based on relative frequency in language", function () {
-    var letter1, 
-        letter1Count = 0,
-        letterNot1Count = 0,
-        frequency = 0,
-        testCount = 100000,
-        testIndex = 0,
-        frequencyExpected; 
-
-    // Choose random-ish letter;
-    letter1 = boggle._chooseLetter();
-        
-    // Re-define random to be not at all random
-    boggle.random = function (min, max) {
-      return ((max - min) / testCount) * testIndex;
-    };
-
-    frequencyExpected = boggle._letterFrequencies.en[letter1]; 
-
-    for(testIndex = 0; testIndex < testCount; testIndex++) {
-      var letter = boggle._chooseLetter();
-      if(letter === letter1) {
-        letter1Count++;
-      } else {
-        letterNot1Count++;
-      }
-    }
-
-    frequency = letter1Count / (testCount / 100);
-    frequency = Math.round(frequency * 100) / 100;
-    expect(frequency).toEqual(frequencyExpected);
-  });
-});
-
-// describe("boggle._binSearch", function () {
-//   "use strict";
-//   it("finds words in a alphabetically sorted list", function () {
-//     var list = ["APPLE", "BANANA", "CACTUS", "DANDILION", "EGGPLANT"];
-//     expect(boggle._binSearch(list, "APPLE")).toEqual(0);
-//     expect(boggle._binSearch(list, "EGGPLANT")).toEqual(4);
-//     expect(boggle._binSearch(list, "CACTUS")).toEqual(2);
-//   });
-// });

@@ -18,6 +18,9 @@ this.boggle = this.boggle || {};
     render: function () {
       this.$el.html(this.html());
       _.each(this.children, this.assignChild, this);
+      if(typeof this.afterRender === "function") {
+        this.afterRender();
+      }
     },
     assignChild: function (view, key) {
       view.setElement(this.$("#"+key)).render();
@@ -42,10 +45,10 @@ this.boggle = this.boggle || {};
 
   views.Game = views.Base.extend({
     html: function () {
-      return "<div id='clock'></div>" +
-             "<div id='letterGrid'></div>" +
-             "<div id='typewritter'></div>" +
-             "<div id='playersAnswers'></div>" +
+      return "<div class='u-fixedTop'><div id='clock'></div>" +
+             "<div id='letterGrid'></div></div>" +
+             "<div id='typewritter' class='u-fixedBottom'></div>" +
+             "<div id='playersAnswers' class='u-gridWidthMargin u-clockHeightMargin'></div>" +
              "<div id='correctAnswers'></div>";
     }
   });
@@ -59,7 +62,8 @@ this.boggle = this.boggle || {};
     },
     _block: function (options) {
       return "<div class='Block u-width" + options.width +
-          " u-height" + options.height + "'>" + options.content + "</div>";
+          " u-height" + options.height + " " + options.className + "'>" + 
+          options.content + "</div>";
     },
     html: function () {
       var blocks = _.map(this.letterGrid, function (letter) {
@@ -72,7 +76,8 @@ this.boggle = this.boggle || {};
       return this._block({
         width: this.width,
         height: this.height,
-        content: blocks
+        content: blocks,
+        className: "LetterGrid"
       });
     }
   });
@@ -88,6 +93,9 @@ this.boggle = this.boggle || {};
         return "<div class='Block u-widthHalf'>"+json.letter+"</div>";
       }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div>";
     },
+    afterRender: function () {
+      this.$cursor = this.$(".Typewritter-cursor");
+    },
     collectionEvents: {
       "add remove reset": "render"
     },
@@ -100,12 +108,14 @@ this.boggle = this.boggle || {};
         case "playing":
           document.body.addEventListener("keydown", this._keyDowned);
           this._cursorInterval = setInterval(function () {
-            self.$(".Typewritter-cursor").toggleClass("u-hidden");
+            self.$cursor.toggleClass("u-hidden");
           }, 600);
           break;
         case "over":
           clearInterval(this._cursorInterval);
           document.body.removeEventListener("keydown", this._keyDowned);
+          this.collection.reset();
+          this.$cursor.addClass("u-hidden");
           break;
       }
     },
@@ -132,7 +142,7 @@ this.boggle = this.boggle || {};
         this.collection.reset();
       }
 
-      if(letter != null) {
+      if(letter != null && this.collection.length < 16) {
         this.collection.push({
           letter: letter
         });
@@ -156,8 +166,8 @@ this.boggle = this.boggle || {};
       var items = this.collection.map(function (model) {
         var json = model.toJSON();
         return "<li>"+json.word+"</li>"; 
-      }).join("");
-      return "<ul>"+items+"</ul>";
+      }).reverse().join("");
+      return "<ul class='Answers'>"+items+"</ul>";
     }
   });
 
@@ -168,7 +178,15 @@ this.boggle = this.boggle || {};
       if(seconds.length == 1) {
         seconds = "0" + seconds;
       }
-      return "" + json.minutes + ":" + seconds;
+      if(json.minutes === 0) {
+        if(json.seconds <= 30) {
+          return "<div class='Clock Clock--alert'>:" + seconds + "</div>";
+        } else {
+          return "<div class='Clock'>:" + seconds + "</div>";
+        }
+      } else {
+        return "<div class='Clock'>" + json.minutes + ":" + seconds + "</div>";
+      }
     },
     modelEvents: {
       "change:seconds": "render"
