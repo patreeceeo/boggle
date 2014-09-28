@@ -19,8 +19,8 @@ this.boggle = this.boggle || {};
       this.$el.html(this.html());
       _.each(this.children, this.assignChild, this);
     },
-    assignChild: function (view, selector) {
-      view.setElement(this.$(selector)).render();
+    assignChild: function (view, key) {
+      view.setElement(this.$("#"+key)).render();
     },
     bindModelEvents: function (model, modelEvents) {
       _.each(modelEvents, function (methodName, eventString) {
@@ -42,10 +42,10 @@ this.boggle = this.boggle || {};
 
   views.Game = views.Base.extend({
     html: function () {
-      return "<div id='LetterGrid-container'></div>" +
-             "<div id='Typewritter-container'></div>" +
-             "<div id='Answers-container'></div>" +
-             "<div id='CorrectAnswers-container'></div>";
+      return "<div id='letterGrid'></div>" +
+             "<div id='typewritter'></div>" +
+             "<div id='playersAnswers'></div>" +
+             "<div id='correctAnswers'></div>";
     }
   });
 

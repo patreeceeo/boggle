@@ -12,13 +12,13 @@
       boggle.masterWordList.en, 
       game.state.letterGrid
   ));
-  game.state.answers = new boggle.WordCollection();
+  game.state.playersAnswers = new boggle.WordCollection();
   // wait for page to load and render
   setTimeout(function () {
     var gameView, 
         letterGridView, 
         typewritterView,
-        answersView;
+        playersAnswersView;
 
     letterGridView = new boggle.views.LetterGrid({
       width: boggle.options.grid.width,
@@ -32,28 +32,25 @@
 
     typewritterView.on("enter", function (word) {
       if(game.state.correctAnswers.contains(word) && 
-        !game.state.answers.contains(word)
+        !game.state.playersAnswers.contains(word)
       ) {
-        game.state.answers.addWords([word]);
+        game.state.playersAnswers.addWords([word]);
       }
     });
 
-    answersView = new boggle.views.WordList({
-      collection: game.state.answers
+    playersAnswersView = new boggle.views.WordList({
+      collection: game.state.playersAnswers
     });
 
     gameView = new boggle.views.Game({
-      el: "#game-container",
+      el: "#game",
       children: {
-        "#LetterGrid-container": letterGridView,
-        "#Typewritter-container": typewritterView,
-        "#Answers-container": answersView
+        "letterGrid": letterGridView,
+        "typewritter": typewritterView,
+        "playersAnswers": playersAnswersView
       }
     });
 
     gameView.render();
-
-    game.state.answers.on("add", function () {
-    });
   }, 1);
 })(this.boggle);
