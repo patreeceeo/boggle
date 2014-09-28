@@ -30,7 +30,7 @@ this.boggle = this.boggle || {};
   boggle.map = function (array, fn) {
     var i, retval = [], callback;
     callback = function (el, i) {
-      fn.call(boggle, el, i);
+      return fn.call(boggle, el, i);
     };
     if(typeof array.map === "function") {
       return array.map(callback);
@@ -60,6 +60,13 @@ this.boggle = this.boggle || {};
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1 ],		/* E */
     [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0 ]		/* F */
   ];
+
+  boggle._cubes = [
+		"ednosw", "aaciot", "acelrs", "ehinps",
+		"eefhiy", "elpstu", "acdemp", "gilruw",
+		"egkluy", "ahmors", "abilty", "adenvz",
+		"bfiorx", "dknotu", "abjmoq", "egintv"
+	]; 
 
   boggle._findCubeIndexes = function (letter1, letter2, letterMap) {
     var retval = [],
@@ -151,75 +158,26 @@ this.boggle = this.boggle || {};
     return foundWords;
   };
 
-  boggle._letterFrequencies = {
-    en: {
-      E: 12.02,
-      T: 9.10,
-      A: 8.12,
-      O: 7.68,
-      I: 7.31,
-      N: 6.95,
-      S: 6.28,
-      R: 6.02,
-      H: 5.92,
-      D: 4.32,
-      L: 3.98,
-      U: 2.88,
-      C: 2.71,
-      M: 2.61,
-      F: 2.30,
-      Y: 2.11,
-      W: 2.09,
-      G: 2.03,
-      P: 1.82,
-      B: 1.49,
-      V: 1.11,
-      K: 0.69,
-      X: 0.17,
-      Q: 0.11,
-      J: 0.10,
-      Z: 0.07
-    }
-  };
-
-  boggle._buildLetterBank = function () {
-    if(this._letterBank == null) {
-      this._letterBank = [];
-      var total = 0;
-      boggle.forEachKeyValue(this._letterFrequencies.en, function (key, value) {
-        this._letterBank.push({letter: key, min: total, max: total + value}); 
-        total += value;
-      });
-    }
-  };
-
   boggle.random = function (min, max) {
     return Math.random() * max + min;
   };
 
-  boggle._chooseLetter = function () {
-    boggle._buildLetterBank();
-    var max = this._letterBank[this._letterBank.length - 1].max,
-        choice,
-        letter;
-    choice = boggle.random(0, max);
-    boggle.forEach(this._letterBank, function (letterInfo) {
-      if(letterInfo.min <= choice && letterInfo.max > choice) {
-        letter = letterInfo.letter;
-      }
+  boggle.shuffle = function (array) {
+    var retval = [], rindex;
+    this.forEach(array, function (item) {
+      do {
+        rindex = Math.floor(this.random(0, array.length));
+      } while(retval[rindex] != null);
+      retval[rindex] = item;
     });
-    return letter;
+    return retval;
   };
 
   boggle.createLetterGrid = function () {
-    var letterGrid = [],
-        width = boggle.options.grid.width,
-        height = boggle.options.grid.height;
-    
-    for(var i = 0; i < width * height; i++) {
-      letterGrid.push(this._chooseLetter());
-    }
-    return letterGrid;
+    var shuffledCubes = this.shuffle(this._cubes);
+    return this.map(shuffledCubes, function (cube) {
+      return cube[Math.floor(this.random(0, cube.length))];
+    });
   };
 
   boggle.Model = Backbone.Model;
@@ -234,12 +192,12 @@ this.boggle = this.boggle || {};
   boggle.WordCollection = boggle.Collection.extend({
     contains: function (word) {
       return this.filter(function (model) {
-        return word.toUpperCase() === model.get("word");
+        return word === model.get("word");
       }, this).length > 0;
     },
     addWords: function (words) {
       this.add(words.map(function (word) {
-        return {word: word.toUpperCase()};
+        return {word: word};
       }));
     }
   });

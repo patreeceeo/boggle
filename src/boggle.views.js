@@ -96,7 +96,7 @@ this.boggle = this.boggle || {};
       "add remove reset": "render"
     },
     _keyDowned: function (e) {
-      var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      var abc = "abcdefghijklmnopqrstuvwxyz",
           letter;
 
       if(e.keyCode >= 65 && e.keyCode <= 90) {
