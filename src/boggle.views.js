@@ -44,8 +44,8 @@ this.boggle = this.boggle || {};
     html: function () {
       return "<div id='LetterGrid-container'></div>" +
              "<div id='Typewritter-container'></div>" +
-             "<div id='Answers-found-container'></div>" +
-             "<div id='Answers-all-container'></div>";
+             "<div id='Answers-container'></div>" +
+             "<div id='CorrectAnswers-container'></div>";
     }
   });
 
@@ -79,8 +79,7 @@ this.boggle = this.boggle || {};
   views.Typewritter = views.Base.extend({
     initialize: function () {
       this._super("initialize");
-      _.bindAll(this, "_keyPressed", "_keyDowned");
-      document.body.addEventListener("keypress", this._keyPressed);
+      _.bindAll(this, "_keyDowned");
       document.body.addEventListener("keydown", this._keyDowned);
       var self = this;
       setInterval(function () {
@@ -96,9 +95,7 @@ this.boggle = this.boggle || {};
     collectionEvents: {
       "add remove reset": "render"
     },
-    _keyPressed: function () {},
     _keyDowned: function (e) {
-      e.preventDefault();
       var abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
           letter;
 
@@ -108,6 +105,13 @@ this.boggle = this.boggle || {};
       if(e.keyCode >= 97 && e.keyCode <= 122) {
         letter = abc[e.keyCode - 97];
       }
+
+      if(e.metaKey && e.keyCode !== 8) {
+        return;
+      }
+
+      e.preventDefault();
+
       if(e.keyCode === 13) {
         var word = "" + this.collection;
         this.trigger("enter", word);
@@ -127,6 +131,19 @@ this.boggle = this.boggle || {};
           this.collection.pop();
         }
       }
+    }
+  });
+
+  views.WordList = views.Base.extend({
+    collectionEvents: {
+      "add remove": "render"
+    },
+    html: function () {
+      var items = this.collection.map(function (model) {
+        var json = model.toJSON();
+        return "<li>"+json.word+"</li>"; 
+      }).join("");
+      return "<ul>"+items+"</ul>";
     }
   });
 
