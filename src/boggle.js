@@ -201,5 +201,28 @@ this.boggle = this.boggle || {};
       }));
     }
   });
+  boggle.Clock = boggle.Model.extend({
+    defaults: {
+      "minutes": 2,
+      "seconds": 0
+    },
+    initialize: function () {
+      var self = this;
+      var iid = setInterval(function () {
+        var json = self.toJSON();
+        if(json.seconds === 0) {
+          json.minutes -= 1;
+          json.seconds = 59;
+        } else {
+          json.seconds -= 1;
+        }
+        if(json.minutes === 0 && json.seconds === 0) {
+          clearInterval(iid);
+          self.trigger("timeup");
+        }
+        self.set(json);
+      }, 1000);
+    }
+  });
 
 })(this.boggle, this.Backbone);

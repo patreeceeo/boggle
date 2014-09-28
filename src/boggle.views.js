@@ -42,7 +42,8 @@ this.boggle = this.boggle || {};
 
   views.Game = views.Base.extend({
     html: function () {
-      return "<div id='letterGrid'></div>" +
+      return "<div id='clock'></div>" +
+             "<div id='letterGrid'></div>" +
              "<div id='typewritter'></div>" +
              "<div id='playersAnswers'></div>" +
              "<div id='correctAnswers'></div>";
@@ -80,11 +81,6 @@ this.boggle = this.boggle || {};
     initialize: function () {
       this._super("initialize");
       _.bindAll(this, "_keyDowned");
-      document.body.addEventListener("keydown", this._keyDowned);
-      var self = this;
-      setInterval(function () {
-        self.$(".Typewritter-cursor").toggleClass("u-hidden");
-      }, 600);
     },
     html: function () {
       return this.collection.map(function (model) {
@@ -94,6 +90,24 @@ this.boggle = this.boggle || {};
     },
     collectionEvents: {
       "add remove reset": "render"
+    },
+    modelEvents: {
+      "change:gameState": "_changeState"
+    },
+    _changeState: function () {
+      var self = this;
+      switch(this.model.get("gameState")) {
+        case "playing":
+          document.body.addEventListener("keydown", this._keyDowned);
+          this._cursorInterval = setInterval(function () {
+            self.$(".Typewritter-cursor").toggleClass("u-hidden");
+          }, 600);
+          break;
+        case "over":
+          clearInterval(this._cursorInterval);
+          document.body.removeEventListener("keydown", this._keyDowned);
+          break;
+      }
     },
     _keyDowned: function (e) {
       var abc = "abcdefghijklmnopqrstuvwxyz",
@@ -144,6 +158,20 @@ this.boggle = this.boggle || {};
         return "<li>"+json.word+"</li>"; 
       }).join("");
       return "<ul>"+items+"</ul>";
+    }
+  });
+
+  views.Clock = views.Base.extend({
+    html: function () {
+      var json = this.model.toJSON();
+      var seconds = "" + json.seconds;
+      if(seconds.length == 1) {
+        seconds = "0" + seconds;
+      }
+      return "" + json.minutes + ":" + seconds;
+    },
+    modelEvents: {
+      "change:seconds": "render"
     }
   });
 
