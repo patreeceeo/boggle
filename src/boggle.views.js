@@ -87,10 +87,10 @@ this.boggle = this.boggle || {};
       _.bindAll(this, "_keyDowned");
     },
     html: function () {
-      return this.collection.map(function (model) {
+      return "<div class='Typewritter'>" + this.collection.map(function (model) {
         var json = model.toJSON();
         return "<div class='Block u-widthHalf'>"+json.letter+"</div>";
-      }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div>";
+      }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div></div>";
     },
     afterRender: function () {
       this.$cursor = this.$(".Typewritter-cursor");
@@ -109,6 +109,13 @@ this.boggle = this.boggle || {};
           this._cursorInterval = setInterval(function () {
             self.$cursor.toggleClass("u-hidden");
           }, 600);
+          this.$(".Typewritter").removeClass("Typewritter--wrong");
+          break;
+        case "wrong":
+          clearInterval(this._cursorInterval);
+          document.body.removeEventListener("keydown", this._keyDowned);
+          this.$cursor.addClass("u-hidden");
+          this.$(".Typewritter").addClass("Typewritter--wrong");
           break;
         case "over":
           clearInterval(this._cursorInterval);
@@ -138,7 +145,6 @@ this.boggle = this.boggle || {};
       if(e.keyCode === 13) {
         var word = "" + this.collection;
         this.trigger("enter", word);
-        this.collection.reset();
       }
 
       if(letter != null && this.collection.length < 16) {

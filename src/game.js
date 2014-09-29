@@ -39,6 +39,13 @@
       var wordModel = game.state.answers.findWhere({word: word});
       if(wordModel != null) {
         wordModel.set({found: true});
+        game.state.guessLetters.reset();
+      } else {
+        game.state.model.set({gameState: "wrong"});
+        setTimeout(function () {
+          game.state.model.set({gameState: "playing"});
+          game.state.guessLetters.reset();
+        }, 1000);
       }
     });
 

@@ -17,7 +17,7 @@ body {
   background: WhiteSmoke;
 }
 .Clock--alert {
-  background: red;
+  background: Crimson;
   color: white;
 }
 .Answers {
@@ -58,6 +58,10 @@ body {
 .Typewritter-cursor {
   color: gray;
   margin: -0.1em;
+}
+.Typewritter.Typewritter--wrong div {
+  color: Crimson;
+  text-decoration: line-through;
 }
 
 .u-widthHalf {
