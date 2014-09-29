@@ -25,10 +25,35 @@ body {
   list-style: none;
 }
 .Answers li {
-  display: inline-block;
+  float: left;
   width: 8em;
+  height: 1em;
+}
+.Answers .Answers-accentContainer {
+  position: relative;
+  height: 100%;
+}
+.Answers .Answers-text {
+  z-index: 1;
+  position: relative;
+  display: inline-block;
+}
+.Answers .Answers-accent {
+  background: WhiteSmoke;
+  position: absolute;
+  bottom: 0;
+  height: 0.33em;
+  width: 100%;
+  z-index: 0;
 }
 
+.Answers .Answers-checkIcon {
+  z-index: 1;
+  position: absolute;
+  right: 100%;
+  display: inline-block;
+  color: LimeGreen;
+}
 
 .Typewritter-cursor {
   color: gray;
@@ -70,14 +95,16 @@ body {
   top: 0;
   position: fixed;
   width: 100%;
+  z-index: 100;
 }
 .u-fixedBottom {
   bottom: 0;
   position: fixed;
   width: 100%;
+  z-index: 100;
 }
 .u-clockHeightMargin {
-  margin-top: 1rem;
+  margin-top: 0.5em;
 }
 .u-gridWidthMargin {
   margin-left: 10rem;

@@ -19,7 +19,7 @@ this.boggle = this.boggle || {};
       this.$el.html(this.html());
       _.each(this.children, this.assignChild, this);
       if(typeof this.afterRender === "function") {
-        this.afterRender();
+        this.afterRender.apply(this, arguments);
       }
     },
     assignChild: function (view, key) {
@@ -48,8 +48,7 @@ this.boggle = this.boggle || {};
       return "<div class='u-fixedTop'><div id='clock'></div>" +
              "<div id='letterGrid'></div></div>" +
              "<div id='typewritter' class='u-fixedBottom'></div>" +
-             "<div id='playersAnswers' class='u-gridWidthMargin u-clockHeightMargin'></div>" +
-             "<div id='correctAnswers'></div>";
+             "<div id='answers' class='u-gridWidthMargin u-clockHeightMargin'></div>";
     }
   });
 
@@ -160,14 +159,41 @@ this.boggle = this.boggle || {};
 
   views.WordList = views.Base.extend({
     collectionEvents: {
-      "add remove": "render"
+      "add remove change:found": "render"
+    },
+    modelEvents: {
+      "change:gameState": "render"
     },
     html: function () {
+      var gameState = this.model.get("gameState");
       var items = this.collection.map(function (model) {
         var json = model.toJSON();
-        return "<li>"+json.word+"</li>"; 
-      }).reverse().join("");
+        if(json.found) {
+          return "<li><div class='Answers-accentContainer'>" + 
+                 "<div class='Answers-checkIcon'>&check;</div>" +
+                 "<div class='Answers-text'>"+json.word+"</div>" +
+                 "<div class='Answers-accent'></div></div></li>"; 
+        } else {
+          if(gameState != "over") {
+            return "<li><div class='Answers-accentContainer'>" +
+                   "<div class='Answers-accent'></div></div></li>"; 
+          } else {
+            return "<li><div class='Answers-accentContainer'>" +
+                   "<div class='Answers-text'>"+json.word+"</div>" +
+                   "<div class='Answers-accent'></div></div></li>"; 
+          }
+        }
+      }).join("");
       return "<ul class='Answers'>"+items+"</ul>";
+    },
+    afterRender: function (changedModel) {
+      if(changedModel != null) {
+        this.$(".Answers-text").each(function (index, el) {
+          if($(el).text().trim() === changedModel.get("word")) {
+            window.scrollTo(0, $(el).offset().top - $(el).outerHeight());
+          }
+        });
+      }
     }
   });
 

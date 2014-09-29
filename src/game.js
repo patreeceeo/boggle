@@ -10,20 +10,18 @@
   });
   game.state.letterGrid = boggle.createLetterGrid();
   game.state.guessLetters = new boggle.LetterCollection();
-  game.state.correctAnswers = new boggle.WordCollection();
-  game.state.correctAnswers.addWords(boggle.findWords(
+  game.state.answers = new boggle.WordCollection();
+  game.state.answers.addWords(boggle.findWords(
       boggle.masterWordList.en, 
       game.state.letterGrid
   ));
-  game.state.playersAnswers = new boggle.WordCollection();
   game.state.clock = new boggle.Clock();
   // wait for page to load and render
   setTimeout(function () {
     var gameView, 
         letterGridView, 
         typewritterView,
-        playersAnswersView,
-        correctAnswersView,
+        answersView,
         clockView;
 
     letterGridView = new boggle.views.LetterGrid({
@@ -38,19 +36,15 @@
     });
 
     typewritterView.on("enter", function (word) {
-      if(game.state.correctAnswers.contains(word) && 
-        !game.state.playersAnswers.contains(word)
-      ) {
-        game.state.playersAnswers.addWords([word]);
+      var wordModel = game.state.answers.findWhere({word: word});
+      if(wordModel != null) {
+        wordModel.set({found: true});
       }
     });
 
-    playersAnswersView = new boggle.views.WordList({
-      collection: game.state.playersAnswers
-    });
-
-    correctAnswersView = new boggle.views.WordList({
-      collection: game.state.correctAnswers
+    answersView = new boggle.views.WordList({
+      collection: game.state.answers,
+      model: game.state.model
     });
 
     clockView = new boggle.views.Clock({
@@ -58,7 +52,6 @@
     });
 
     game.state.clock.on("timeup", function () {
-      gameView.assignChild(correctAnswersView, "correctAnswers");
       game.state.model.set({gameState: "over"});
     });
 
@@ -67,7 +60,7 @@
       children: {
         letterGrid: letterGridView,
         typewritter: typewritterView,
-        playersAnswers: playersAnswersView,
+        answers: answersView,
         clock: clockView
       }
     });
