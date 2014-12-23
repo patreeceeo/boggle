@@ -1,7 +1,13 @@
 
+html {
+  height: 100%;
+}
+
 body {
   font-family: monospace;
   font-size: 3rem;
+  height: 100%;
+  overflow: hidden;
 }
 
 .Block {
@@ -99,17 +105,25 @@ body {
   top: 0;
   position: fixed;
   width: 100%;
-  z-index: 100;
 }
 .u-fixedBottom {
   bottom: 0;
   position: fixed;
   width: 100%;
-  z-index: 100;
 }
 .u-clockHeightMargin {
   margin-top: 0.5em;
+  padding-bottom: 0.5em;
 }
 .u-gridWidthMargin {
   margin-left: 10rem;
+}
+.u-scrollContainer {
+  height: 100%;
+  overflow: scroll;
+  position: absolute;
+}
+
+.u-zAnswers {
+  z-index: 5;
 }

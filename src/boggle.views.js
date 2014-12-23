@@ -48,7 +48,7 @@ this.boggle = this.boggle || {};
       return "<div class='u-fixedTop'><div id='clock'></div>" +
              "<div id='letterGrid'></div></div>" +
              "<div id='typewritter' class='u-fixedBottom'></div>" +
-             "<div id='answers' class='u-gridWidthMargin u-clockHeightMargin'></div>";
+             "<div id='answers' class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
     }
   });
 
