@@ -181,7 +181,9 @@ this.boggle = this.boggle || {};
   };
 
   boggle.Model = Backbone.Model;
+
   boggle.Collection = Backbone.Collection;
+
   boggle.LetterCollection = boggle.Collection.extend({
     toString: function () {
       return this.reduce(function (memo, model) {
@@ -201,6 +203,23 @@ this.boggle = this.boggle || {};
       }));
     }
   });
+
+  boggle.Game = boggle.Model.extend({
+    defaults: {
+      gameState: "ready",
+      score: 0,
+      scoreDelta: 0
+    },
+    score: function (word) {
+      var score = this.get("score"),
+          scoreDelta = Math.pow(word.length - 2, 2);
+      this.set({
+        score: score + scoreDelta,
+        scoreDelta: scoreDelta
+      });
+    }
+  });
+
   boggle.Clock = boggle.Model.extend({
     defaults: {
       "minutes": 2,

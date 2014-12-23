@@ -5,8 +5,7 @@
 
   game.state = {};
 
-  game.state.model = new boggle.Model({
-    gameState: "ready"
+  game.state.model = new boggle.Game({
   });
   game.state.letterGrid = boggle.createLetterGrid();
   game.state.guessLetters = new boggle.LetterCollection();
@@ -22,7 +21,8 @@
         letterGridView, 
         typewritterView,
         answersView,
-        clockView;
+        clockView,
+        scoreboardView;
 
     letterGridView = new boggle.views.LetterGrid({
       width: boggle.options.grid.width,
@@ -39,6 +39,7 @@
       var wordModel = game.state.answers.findWhere({word: word});
       if(wordModel != null) {
         wordModel.set({found: true});
+        game.state.model.score(word);
         game.state.guessLetters.reset();
       } else {
         game.state.model.set({gameState: "wrong"});
@@ -58,6 +59,10 @@
       model: game.state.clock
     });
 
+    scoreboardView = new boggle.views.Scoreboard({
+      model: game.state.model
+    });
+
     game.state.clock.on("timeup", function () {
       game.state.model.set({gameState: "over"});
     });
@@ -68,7 +73,8 @@
         letterGrid: letterGridView,
         typewritter: typewritterView,
         answers: answersView,
-        clock: clockView
+        clock: clockView,
+        scoreboard: scoreboardView
       }
     });
 

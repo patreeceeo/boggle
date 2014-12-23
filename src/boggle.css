@@ -16,6 +16,7 @@ body {
 
 .LetterGrid {
 }
+
 .Clock {
   font-size: 0.5em;
   text-align: center;
@@ -26,6 +27,18 @@ body {
   background: Crimson;
   color: white;
 }
+
+.Scoreboard {
+  font-size: 0.5em;
+  text-align: center;
+  width: 100%;
+  background: GhostWhite;
+}
+.Scoreboard--delta {
+  background: Green;
+  color: white;
+}
+
 .Answers {
   font-size: 0.5em;
   list-style: none;
@@ -110,8 +123,8 @@ body {
   width: 100%;
 }
 .u-clockHeightMargin {
-  margin-top: 0.5em;
-  padding-bottom: 0.5em;
+  margin-top: 1em;
+  padding-bottom: 1em;
 }
 .u-gridWidthMargin {
   margin-left: 10rem;

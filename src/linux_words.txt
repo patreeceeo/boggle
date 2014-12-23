@@ -15024,6 +15024,7 @@ envoys
 envy
 enzyme
 Eocene
+eon
 epaulet
 epaulets
 ephemeral
@@ -37466,6 +37467,7 @@ simulcast
 simultaneity
 simultaneous
 simultaneously
+sin
 Sinai
 Sinatra
 Sinbad

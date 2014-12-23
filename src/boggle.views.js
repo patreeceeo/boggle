@@ -45,7 +45,7 @@ this.boggle = this.boggle || {};
 
   views.Game = views.Base.extend({
     html: function () {
-      return "<div class='u-fixedTop'><div id='clock'></div>" +
+      return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
              "<div id='letterGrid'></div></div>" +
              "<div id='typewritter' class='u-fixedBottom'></div>" +
              "<div id='answers' " +
@@ -238,6 +238,24 @@ this.boggle = this.boggle || {};
     },
     modelEvents: {
       "change:seconds": "render"
+    }
+  });
+
+  views.Scoreboard = views.Base.extend({
+    html: function () {
+      var json = this.model.toJSON(),
+          self = this;
+      if(json.scoreDelta > 0) {
+        setTimeout(function () {
+          self.model.set({scoreDelta: 0}); 
+        }, 1000);
+        return "<div class='Scoreboard Scoreboard--delta'>score + "+json.scoreDelta+" = "+json.score+"</div>";
+      } else {
+        return "<div class='Scoreboard'>score = "+json.score+"</div>";
+      }
+    },
+    modelEvents: {
+      "change": "render"
     }
   });
 
