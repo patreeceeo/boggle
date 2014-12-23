@@ -37,7 +37,7 @@
 
     typewritterView.on("enter", function (word) {
       var wordModel = game.state.answers.findWhere({word: word});
-      if(wordModel != null) {
+      if(wordModel != null && wordModel.get("found") !== true) {
         wordModel.set({found: true});
         game.state.model.score(word);
         game.state.guessLetters.reset();

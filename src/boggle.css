@@ -138,3 +138,7 @@ body {
 .u-zAnswers {
   z-index: 5;
 }
+
+.u-inline {
+  display: inline;
+}
