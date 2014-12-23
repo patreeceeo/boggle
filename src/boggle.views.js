@@ -220,12 +220,12 @@ this.boggle = this.boggle || {};
       }
       if(json.minutes === 0) {
         if(json.seconds <= 30) {
-          return "<div class='Clock Clock--alert'>:" + seconds + "</div>";
+          return "<div class='Clock Clock--alert'>t - :" + seconds + "</div>";
         } else {
-          return "<div class='Clock'>:" + seconds + "</div>";
+          return "<div class='Clock'>t - :" + seconds + "</div>";
         }
       } else {
-        return "<div class='Clock'>" + json.minutes + ":" + seconds + "</div>";
+        return "<div class='Clock'>t - " + json.minutes + ":" + seconds + "</div>";
       }
     },
     events: {
