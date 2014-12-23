@@ -48,7 +48,8 @@ this.boggle = this.boggle || {};
       return "<div class='u-fixedTop'><div id='clock'></div>" +
              "<div id='letterGrid'></div></div>" +
              "<div id='typewritter' class='u-fixedBottom'></div>" +
-             "<div id='answers' class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
+             "<div id='answers' " +
+              "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
     }
   });
 
@@ -177,7 +178,9 @@ this.boggle = this.boggle || {};
         if(json.found) {
           return "<li><div class='Answers-accentContainer'>" + 
                  "<div class='Answers-checkIcon'>&check;</div>" +
-                 "<div class='Answers-text'>"+json.word+"</div>" +
+                 "<div class='Answers-text'>" +
+                 "<a target='_blank' href='https://www.google.com/webhp#q=define+"+json.word+"'>"+json.word+"</a>" +
+                 "</div>" +
                  "<div class='Answers-accent'></div></div></li>"; 
         } else {
           if(gameState != "over") {
@@ -185,7 +188,9 @@ this.boggle = this.boggle || {};
                    "<div class='Answers-accent'></div></div></li>"; 
           } else {
             return "<li><div class='Answers-accentContainer'>" +
-                   "<div class='Answers-text'>"+json.word+"</div>" +
+                   "<div class='Answers-text'>" +
+                   "<a target='_blank' href='https://www.google.com/webhp#q=define+"+json.word+"'>"+json.word+"</a>" +
+                   "</div>" +
                    "<div class='Answers-accent'></div></div></li>"; 
           }
         }
@@ -218,6 +223,14 @@ this.boggle = this.boggle || {};
         }
       } else {
         return "<div class='Clock'>" + json.minutes + ":" + seconds + "</div>";
+      }
+    },
+    events: {
+      "click": function () {
+         this.model.set({
+           minutes: 0,
+           seconds: 1
+         });
       }
     },
     modelEvents: {
