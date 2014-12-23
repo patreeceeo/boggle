@@ -185,9 +185,11 @@ this.boggle = this.boggle || {};
         } else {
           if(gameState != "over") {
             return "<li><div class='Answers-accentContainer'>" +
+                   "<div class='Answers-checkIcon'></div>" +
                    "<div class='Answers-accent'></div></div></li>"; 
           } else {
             return "<li><div class='Answers-accentContainer'>" +
+                   "<div class='Answers-checkIcon'></div>" +
                    "<div class='Answers-text'>" +
                    "<a target='_blank' href='https://www.google.com/webhp#q=define+"+json.word+"'>"+json.word+"</a>" +
                    "</div>" +
@@ -198,10 +200,11 @@ this.boggle = this.boggle || {};
       return "<ul class='Answers'>"+items+"</ul>";
     },
     afterRender: function (changedModel) {
+      var self = this;
       if(changedModel != null) {
         this.$(".Answers-text").each(function (index, el) {
           if($(el).text().trim() === changedModel.get("word")) {
-            window.scrollTo(0, $(el).offset().top - $(el).outerHeight());
+            self.$el.scrollTop($(el).offset().top - $(el).outerHeight());
           }
         });
       }

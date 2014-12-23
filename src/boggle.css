@@ -41,8 +41,8 @@ body {
 }
 .Answers .Answers-text {
   z-index: 1;
-  position: relative;
-  display: inline-block;
+  position: absolute;
+  left: 12px;
 }
 .Answers .Answers-accent {
   background: WhiteSmoke;
@@ -54,10 +54,8 @@ body {
 }
 
 .Answers .Answers-checkIcon {
-  z-index: 1;
   position: absolute;
-  right: 100%;
-  display: inline-block;
+  z-index: 1;
   color: LimeGreen;
 }
 
