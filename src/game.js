@@ -53,6 +53,10 @@
           };
           $(document).keypress(unpause);
           break;
+        case "buzzer":
+          game.state.clock.finish();
+          game.state.model.set({gameState: "over"});
+          break;
       }
     }
 

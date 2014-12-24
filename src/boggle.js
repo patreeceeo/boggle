@@ -267,6 +267,13 @@ this.boggle = this.boggle || {};
     },
     pause: function () {
       clearInterval(this.iid);
+    },
+    finish: function () {
+      this.pause();
+      this.set({
+        minutes: 0,
+        seconds: 0
+      });
     }
   });
 
