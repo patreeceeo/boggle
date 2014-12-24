@@ -5,8 +5,7 @@
 
   game.state = {};
 
-  game.state.model = new boggle.Game({
-  });
+  game.state.model = new boggle.Game();
   game.state.letterGrid = boggle.createLetterGrid();
   game.state.guessLetters = new boggle.LetterCollection();
   game.state.answers = new boggle.WordCollection();
@@ -14,6 +13,11 @@
       boggle.masterWordList.en, 
       game.state.letterGrid
   ));
+  game.state.model.set({
+    maxScore: game.state.answers.reduce(function (maxScore, word) {
+      return maxScore + boggle.scoreWord(word); 
+    }, 0)
+  });
   game.state.clock = new boggle.Clock();
   // wait for page to load and render
   setTimeout(function () {

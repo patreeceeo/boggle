@@ -245,13 +245,15 @@ this.boggle = this.boggle || {};
     html: function () {
       var json = this.model.toJSON(),
           self = this;
+      var percent = Math.ceil(json.score/json.maxScore);
       if(json.scoreDelta > 0) {
         setTimeout(function () {
           self.model.set({scoreDelta: 0}); 
         }, 1000);
-        return "<div class='Scoreboard Scoreboard--delta'>score + "+json.scoreDelta+" = "+json.score+"</div>";
+        return "<div class='Scoreboard Scoreboard--delta'>"+ 
+          "score! "+json.score+" (+"+json.scoreDelta+") / "+json.maxScore+" = "+percent+"%</div>";
       } else {
-        return "<div class='Scoreboard'>score = "+json.score+"</div>";
+        return "<div class='Scoreboard'>"+json.score+" / "+json.maxScore+" = "+percent+"%</div>";
       }
     },
     modelEvents: {
