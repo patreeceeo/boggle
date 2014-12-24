@@ -80,6 +80,9 @@ body {
   color: Crimson;
   text-decoration: line-through;
 }
+.Typewritter.Typewritter--paused {
+  color: Gray;
+}
 
 .u-widthHalf {
   width: 0.5em;

@@ -88,10 +88,15 @@ this.boggle = this.boggle || {};
       _.bindAll(this, "_keyDowned");
     },
     html: function () {
-      return "<div class='Typewritter'>" + this.collection.map(function (model) {
-        var json = model.toJSON();
-        return "<div class='Block u-widthHalf'>"+json.letter+"</div>";
-      }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div></div>";
+      var json = this.model.toJSON();
+      if(json.gameState == "paused") {
+        return "<div class='Typewritter Typewritter--paused'>PAUSED -- Press SPACE to continue playing</div>";
+      } else {
+        return "<div class='Typewritter'>" + this.collection.map(function (model) {
+          var json = model.toJSON();
+          return "<div class='Block u-widthHalf'>"+json.letter+"</div>";
+        }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div></div>";
+      }
     },
     afterRender: function () {
       this.$cursor = this.$(".Typewritter-cursor");
@@ -106,11 +111,15 @@ this.boggle = this.boggle || {};
       var self = this;
       switch(this.model.get("gameState")) {
         case "playing":
+          this.render();
           document.body.addEventListener("keydown", this._keyDowned);
           this._cursorInterval = setInterval(function () {
             self.$cursor.toggleClass("u-hidden");
           }, 600);
-          this.$(".Typewritter").removeClass("Typewritter--wrong");
+          break;
+        case "paused":
+          clearInterval(this._cursorInterval);
+          this.render();
           break;
         case "wrong":
           clearInterval(this._cursorInterval);
@@ -130,15 +139,24 @@ this.boggle = this.boggle || {};
       var abc = "abcdefghijklmnopqrstuvwxyz",
           letter;
 
+      switch(this.model.get("gameState")) {
+        case "playing":
+          break;
+        default:
+          return;
+      }
+      if(e.metaKey && e.keyCode !== 8) {
+        return;
+      }
+
       if(e.keyCode >= 65 && e.keyCode <= 90) {
         letter = abc[e.keyCode - 65];
       }
       if(e.keyCode >= 97 && e.keyCode <= 122) {
         letter = abc[e.keyCode - 97];
       }
-
-      if(e.metaKey && e.keyCode !== 8) {
-        return;
+      if(e.keyCode === 190) {
+        letter = ".";
       }
 
       e.preventDefault();

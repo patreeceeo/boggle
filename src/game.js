@@ -39,8 +39,32 @@
       model: game.state.model
     });
 
+    function execCommand (command) {
+      switch(command) {
+        case "p":
+          game.state.clock.pause();
+          game.state.model.set({gameState: "paused"});
+          var unpause = function (e) {
+            if(e.keyCode == 32) {
+              game.state.clock.start();
+              game.state.model.set({gameState: "playing"});
+              $(document).unbind("keypress", unpause);
+            }
+          };
+          $(document).keypress(unpause);
+          break;
+      }
+    }
+
     typewritterView.on("enter", function (word) {
       var wordModel = game.state.answers.findWhere({word: word});
+
+      if(word[0] === ".") {
+        execCommand(word.slice(1));
+        game.state.guessLetters.reset();
+        return;
+      }
+
       if(wordModel != null && wordModel.get("found") !== true) {
         wordModel.set({found: true});
         game.state.model.score(word);

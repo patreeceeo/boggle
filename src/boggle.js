@@ -246,8 +246,11 @@ this.boggle = this.boggle || {};
       "seconds": 0
     },
     initialize: function () {
+      this.start();
+    },
+    start: function () {
       var self = this;
-      var iid = setInterval(function () {
+      this.iid = setInterval(function () {
         var json = self.toJSON();
         if(json.seconds === 0) {
           json.minutes -= 1;
@@ -256,11 +259,14 @@ this.boggle = this.boggle || {};
           json.seconds -= 1;
         }
         if(json.minutes === 0 && json.seconds === 0) {
-          clearInterval(iid);
+          clearInterval(self.iid);
           self.trigger("timeup");
         }
         self.set(json);
       }, 1000);
+    },
+    pause: function () {
+      clearInterval(this.iid);
     }
   });
 
