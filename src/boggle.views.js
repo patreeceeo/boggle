@@ -228,14 +228,6 @@ this.boggle = this.boggle || {};
         return "<div class='Clock'>t - " + json.minutes + ":" + seconds + "</div>";
       }
     },
-    events: {
-      "click": function () {
-         this.model.set({
-           minutes: 0,
-           seconds: 1
-         });
-      }
-    },
     modelEvents: {
       "change:seconds": "render"
     }
