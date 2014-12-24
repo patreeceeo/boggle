@@ -23,7 +23,7 @@ body {
   width: 100%;
   background: WhiteSmoke;
 }
-.Clock--alert {
+.Clock.Clock--alert {
   background: Crimson;
   color: white;
 }
@@ -34,7 +34,7 @@ body {
   width: 100%;
   background: GhostWhite;
 }
-.Scoreboard--delta {
+.Scoreboard.Scoreboard--delta {
   background: Green;
   color: white;
 }
