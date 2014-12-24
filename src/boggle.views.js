@@ -255,7 +255,7 @@ this.boggle = this.boggle || {};
     html: function () {
       var json = this.model.toJSON(),
           self = this;
-      var percent = Math.ceil(json.score/json.maxScore);
+      var percent = Math.ceil((json.score/json.maxScore) * 100);
       if(json.scoreDelta > 0) {
         setTimeout(function () {
           self.model.set({scoreDelta: 0}); 
