@@ -42,8 +42,19 @@
     function execCommand (command) {
       switch(command) {
         case "p":
-          game.state.clock.pause();
           game.state.model.set({gameState: "paused"});
+          break;
+        case "buzzer":
+          game.state.model.set({gameState: "over"});
+          break;
+      }
+    }
+
+    game.state.model.on("change:gameState", function (model, gameState) {
+      switch(gameState) {
+        case "paused":
+        case "ready":
+          game.state.clock.pause();
           var unpause = function (e) {
             if(e.keyCode == 32) {
               game.state.clock.start();
@@ -53,12 +64,13 @@
           };
           $(document).keypress(unpause);
           break;
-        case "buzzer":
+        case "over":
           game.state.clock.finish();
-          game.state.model.set({gameState: "over"});
+          break;
+        default:
           break;
       }
-    }
+    });
 
     typewritterView.on("enter", function (word) {
       var wordModel = game.state.answers.findWhere({word: word});
@@ -101,6 +113,7 @@
 
     gameView = new boggle.views.Game({
       el: "#game",
+      model: game.state.model,
       children: {
         letterGrid: letterGridView,
         typewritter: typewritterView,
@@ -112,6 +125,7 @@
 
     gameView.render();
 
-    game.state.model.set({gameState: "playing"});
+    game.state.model.set({gameState: "ready"});
+
   }, 1);
 })(this.boggle);

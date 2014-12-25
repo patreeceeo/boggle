@@ -226,7 +226,7 @@ this.boggle = this.boggle || {};
 
   boggle.Game = boggle.Model.extend({
     defaults: {
-      gameState: "ready",
+      gameState: "init",
       score: 0,
       scoreDelta: 0
     },

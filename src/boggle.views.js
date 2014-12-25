@@ -44,12 +44,26 @@ this.boggle = this.boggle || {};
   });
 
   views.Game = views.Base.extend({
+    modelEvents: {
+      "change:gameState": function (model, gameState) {
+        if(gameState === "playing" || gameState === "ready") {
+          this.render();
+        }
+      }
+    },
     html: function () {
-      return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
-             "<div id='letterGrid'></div></div>" +
-             "<div id='typewritter' class='u-fixedBottom'></div>" +
-             "<div id='answers' " +
-              "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
+      switch(this.model.get("gameState")) {
+        case "ready":
+          return "<h1>Press SPACE to play.</h1>"+
+                 "<p>Click <a href='#help'>here</a> for help.</p>";
+        default:
+          return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
+                 "<div id='letterGrid'></div></div>" +
+                 "<div id='typewritter' class='u-fixedBottom'></div>" +
+                 "<div id='answers' " +
+                  "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
+          break;
+      }
     }
   });
 
