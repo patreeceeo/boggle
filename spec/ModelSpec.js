@@ -144,6 +144,19 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
+
+    expect(boggle.findWords(this.wordList, letterGrid))
+      .toEqual([]);
+  });
+
+  it("does not find wrap-around words", function () {
+    var letterGrid = [
+      "m", " ", " ", " ",
+      "o", " ", " ", "n",
+      " ", " ", " ", "k",
+      " ", " ", " ", " ",
+    ];
+
     expect(boggle.findWords(this.wordList, letterGrid))
       .toEqual([]);
   });
