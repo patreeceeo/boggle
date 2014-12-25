@@ -54,8 +54,7 @@ this.boggle = this.boggle || {};
     html: function () {
       switch(this.model.get("gameState")) {
         case "ready":
-          return "<h1>Press SPACE to play.</h1>"+
-                 "<p>Click <a href='#help'>here</a> for help.</p>";
+          return "<h1>Press SPACE to play.</h1>";
         default:
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
                  "<div id='letterGrid'></div></div>" +

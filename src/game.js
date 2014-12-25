@@ -67,6 +67,9 @@
         case "over":
           game.state.clock.finish();
           break;
+        case "playing":
+          $("#help").hide();
+          break;
         default:
           break;
       }
