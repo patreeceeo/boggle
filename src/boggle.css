@@ -18,6 +18,10 @@ h1, h2, p, pre, ul {
   margin: 0 0 1em 0;
 }
 
+p, ul, p {
+  margin-left: 1em;
+}
+
 .Block {
   display: inline-block;
 }
