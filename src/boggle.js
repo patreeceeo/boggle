@@ -68,6 +68,9 @@ this.boggle = this.boggle || {};
 		"bfiorx", "dknotu", "abjmoq", "egintv"
 	]; 
 
+  // Find all of the cubeIndexes at which letter1 is adjacent 
+  // to letter2, as indicated by a mapping of letters to cubeIndexes
+  // where the letter can be found.
   boggle._findCubeIndexes = function (letter1, letter2, letterMap) {
     var retval = [],
         set1 = letterMap[letter1] || [],
@@ -91,21 +94,36 @@ this.boggle = this.boggle || {};
     // window.console.debug.apply(window.console, arguments);
   };
 
-  boggle._findPath = function (paths, usedbits) {
+  // Find a path in a 2D space that does is continuous and does not double-back
+  // on itself. The 2D space is represented as a 2D array of numbers, each number 
+  // is an index for a space in a boggle field.
+  // 
+  // Example: 
+  //
+  // 0  1  2  1
+  // 5  3  8  3
+  // 9    13
+  //
+  // There's at least one such path through the above "space" which is 
+  // given by 0, 1, 2, 3.
+  //
+  boggle._findPath = function (paths, usedbits, startCubeIndex) {
     var retval = -1;
+    this._debug("startCubeIndex", startCubeIndex);
     this.forEach(paths, function (cubeIndexes, letterIndex) {
       this._debug("remaining path length:", paths.length, "usedbits:", usedbits, 
         "cubeIndexes:", cubeIndexes);
       return this.forEach(cubeIndexes, function (cubeIndex) {
-        if((1 << cubeIndex) & usedbits) {
-        } else {
+        this._debug("cubeIndex", cubeIndex);
+        if(!((1 << cubeIndex) & usedbits) && 
+          (startCubeIndex == null || this._adjacencyMap[startCubeIndex][cubeIndex] == 1)) {
           this._debug("choosing cubeIndex:", cubeIndex);
           usedbits |= 1 << cubeIndex;
           if(paths.length === 1) {
             this._debug("eureka!");
             retval = 1;
           } else {
-            retval = this._findPath(paths.slice(letterIndex + 1), usedbits);
+            retval = this._findPath(paths.slice(letterIndex + 1), usedbits, cubeIndex);
             if(retval === 1) {
               return 1;
             }

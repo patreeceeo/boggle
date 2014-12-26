@@ -151,13 +151,13 @@ describe("boggle.findWords", function() {
 
   it("does not find wrap-around words", function () {
     var letterGrid = [
-      "m", " ", " ", " ",
-      "o", " ", " ", "n",
-      " ", " ", " ", "k",
-      " ", " ", " ", " ",
+      "a", " ", " ", " ",
+      "g", " ", " ", " ",
+      " ", "a", " ", " ",
+      " ", "p", "n", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, letterGrid))
+    expect(boggle.findWords(["pagan"], letterGrid))
       .toEqual([]);
   });
 });
