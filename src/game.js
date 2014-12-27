@@ -4,21 +4,69 @@
   var game = {};
 
   game.state = {};
-
   game.state.model = new boggle.Game();
-  game.state.letterGrid = boggle.createLetterGrid();
+  game.state.model.on("change:gameState", function (model, gameState) {
+    switch(gameState) {
+      case "paused":
+      case "ready":
+        game.state.clock.pause();
+        var unpause = function (e) {
+          if(e.keyCode === 32) {
+            game.state.model.set({gameState: "playing"});
+            $(document).unbind("keypress", unpause);
+          }
+        };
+        $(document).keypress(unpause);
+        break;
+      case "over":
+        game.state.clock.finish();
+        var playAgain = function (e) {
+          if(e.keyCode === 32) {
+            resetGame();
+            game.state.model.set({gameState: "playing"});
+            $(document).unbind("keypress", playAgain);
+          }
+        };
+        $(document).keypress(playAgain);
+        break;
+      case "wrong":
+        game.state.clock.pause();
+        break;
+      case "playing":
+        $("#help").hide();
+        game.state.clock.start();
+        break;
+      default:
+        break;
+    }
+  });
   game.state.guessLetters = new boggle.LetterCollection();
   game.state.answers = new boggle.WordCollection();
-  game.state.answers.addWords(boggle.findWords(
-      boggle.masterWordList.en, 
-      game.state.letterGrid
-  ));
-  game.state.model.set({
-    maxScore: game.state.answers.reduce(function (maxScore, word) {
-      return maxScore + boggle.scoreWord(word); 
-    }, 0)
-  });
   game.state.clock = new boggle.Clock();
+  game.state.letterGrid = new boggle.Collection();
+
+  function resetGame () {
+    var rawLetterGrid = boggle.createLetterGrid();
+    game.state.model.set(game.state.model.constructor.prototype.defaults);
+    game.state.letterGrid.reset(boggle.map(rawLetterGrid, function (letter) {
+       return {letter: letter};
+    }));
+    game.state.answers.reset();
+    game.state.answers.addWords(boggle.findWords(
+        boggle.masterWordList.en, 
+        rawLetterGrid
+    ));
+
+    game.state.model.set({
+      maxScore: game.state.answers.reduce(function (maxScore, word) {
+        return maxScore + boggle.scoreWord(word); 
+      }, 0)
+    });
+    game.state.clock.reset();
+  }
+
+  resetGame();
+
   // wait for page to load and render
   setTimeout(function () {
     var gameView, 
@@ -31,7 +79,7 @@
     letterGridView = new boggle.views.LetterGrid({
       width: boggle.options.grid.width,
       height: boggle.options.grid.height,
-      letterGrid: game.state.letterGrid
+      collection: game.state.letterGrid
     });
 
     typewritterView = new boggle.views.Typewritter({
@@ -49,31 +97,6 @@
           break;
       }
     }
-
-    game.state.model.on("change:gameState", function (model, gameState) {
-      switch(gameState) {
-        case "paused":
-        case "ready":
-          game.state.clock.pause();
-          var unpause = function (e) {
-            if(e.keyCode == 32) {
-              game.state.clock.start();
-              game.state.model.set({gameState: "playing"});
-              $(document).unbind("keypress", unpause);
-            }
-          };
-          $(document).keypress(unpause);
-          break;
-        case "over":
-          game.state.clock.finish();
-          break;
-        case "playing":
-          $("#help").hide();
-          break;
-        default:
-          break;
-      }
-    });
 
     typewritterView.on("enter", function (word) {
       var wordModel = game.state.answers.findWhere({word: word});
@@ -127,8 +150,6 @@
     });
 
     gameView.render();
-
     game.state.model.set({gameState: "ready"});
-
   }, 1);
 })(this.boggle);

@@ -52,24 +52,27 @@ this.boggle = this.boggle || {};
       }
     },
     html: function () {
-      switch(this.model.get("gameState")) {
+      var json = this.model.toJSON();
+      
+      switch(json.gameState) {
         case "ready":
           return "<h1>Press SPACE to play.</h1>";
         default:
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
-                 "<div id='letterGrid'></div></div>" +
-                 "<div id='typewritter' class='u-fixedBottom'></div>" +
-                 "<div id='answers' " +
-                  "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
-          break;
+          "<div id='letterGrid'></div></div>" +
+          "<div id='typewritter' class='u-fixedBottom'></div>" +
+          "<div id='answers' " +
+          "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
       }
     }
   });
 
   views.LetterGrid = views.Base.extend({
+    collectionEvents: {
+      "add remove change": "render"
+    },
     initialize: function (options) {
       this._super("initialize");
-      this.letterGrid = options.letterGrid;
       this.width = options.width;
       this.height = options.height;
     },
@@ -79,11 +82,11 @@ this.boggle = this.boggle || {};
           options.content + "</div>";
     },
     html: function () {
-      var blocks = _.map(this.letterGrid, function (letter) {
+      var blocks = this.collection.map(function (model) {
         return this._block({
           width: 1,
           height: 1,
-          content: letter
+          content: model.get("letter")
         });
       }, this).join("");
       return this._block({
@@ -102,8 +105,9 @@ this.boggle = this.boggle || {};
     },
     html: function () {
       var json = this.model.toJSON();
-      if(json.gameState == "paused") {
-        return "<div class='Typewritter Typewritter--paused'>PAUSED -- Press SPACE to continue playing</div>";
+      if(json.gameState === "paused") {
+        return "<div class='Typewritter Typewritter--paused'>"+
+               "PAUSED -- Press SPACE to continue playing</div>";
       } else {
         return "<div class='Typewritter'>" + this.collection.map(function (model) {
           var json = model.toJSON();
@@ -197,38 +201,59 @@ this.boggle = this.boggle || {};
 
   views.WordList = views.Base.extend({
     collectionEvents: {
-      "add remove change:found": "render"
+      "add remove change": "render"
     },
     modelEvents: {
       "change:gameState": "render"
     },
     html: function () {
-      var gameState = this.model.get("gameState");
+      var json = this.model.toJSON();
       var items = this.collection.map(function (model) {
-        var json = model.toJSON();
-        if(json.found) {
-          return "<li><div class='Answers-accentContainer'>" + 
-                 "<div class='Answers-checkIcon'>&check;</div>" +
-                 "<div class='Answers-text'>" +
-                 "<a target='_blank' href='https://www.google.com/webhp#q=define+"+json.word+"'>"+json.word+"</a>" +
-                 "</div>" +
-                 "<div class='Answers-accent'></div></div></li>"; 
-        } else {
-          if(gameState != "over") {
-            return "<li><div class='Answers-accentContainer'>" +
-                   "<div class='Answers-checkIcon'></div>" +
+        var itemJson = model.toJSON();
+        if(json.gameState == "over") {
+          if(itemJson.found) {
+            return "<li><div class='Answers-accentContainer'>" + 
+                   "<div class='Answers-checkIcon'>&check;</div>" +
+                   "<div class='Answers-text'>" +
+                   "<a target='_blank' href='https://www.google.com/webhp#q=define+"+
+                   itemJson.word+"'>"+itemJson.word+"</a>" +
+                   "</div>" +
                    "<div class='Answers-accent'></div></div></li>"; 
           } else {
             return "<li><div class='Answers-accentContainer'>" +
                    "<div class='Answers-checkIcon'></div>" +
                    "<div class='Answers-text'>" +
-                   "<a target='_blank' href='https://www.google.com/webhp#q=define+"+json.word+"'>"+json.word+"</a>" +
+                   "<a target='_blank' href='https://www.google.com/webhp#q=define+"+
+                   itemJson.word+"'>"+itemJson.word+"</a>" +
                    "</div>" +
                    "<div class='Answers-accent'></div></div></li>"; 
           }
+        } else {
+          if(itemJson.found) {
+            return "<li><div class='Answers-accentContainer'>" + 
+                   "<div class='Answers-checkIcon'>&check;</div>" +
+                   "<div class='Answers-text'>" + itemJson.word +
+                   "</div>" +
+                   "<div class='Answers-accent'></div></div></li>"; 
+          } else {
+            return "<li><div class='Answers-accentContainer'>" +
+              "<div class='Answers-checkIcon'></div>" +
+              "<div class='Answers-accent'></div></div></li>"; 
+          }
         }
       }).join("");
-      return "<ul class='Answers'>"+items+"</ul>";
+
+      if(json.gameState === "over") {
+        var rando = Math.floor(Math.random()*1000);
+        return "<ul class='Answers'>"+items+"</ul>" +
+            "<section>"+
+            "<h1>Whoah! "+json.score+" points!</h1>"+
+            "<p><img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'></p>"+
+            "<p>Press SPACE to play again.</p>"+
+            "</section>";
+      } else {
+        return "<ul class='Answers'>"+items+"</ul>";
+      }
     },
     afterRender: function (changedModel) {
       var self = this;
@@ -246,7 +271,7 @@ this.boggle = this.boggle || {};
     html: function () {
       var json = this.model.toJSON();
       var seconds = "" + json.seconds;
-      if(seconds.length == 1) {
+      if(seconds.length === 1) {
         seconds = "0" + seconds;
       }
       if(json.minutes === 0) {

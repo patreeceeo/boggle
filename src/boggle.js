@@ -264,7 +264,7 @@ this.boggle = this.boggle || {};
       "seconds": 0
     },
     initialize: function () {
-      this.start();
+      return this;
     },
     start: function () {
       var self = this;
@@ -282,9 +282,11 @@ this.boggle = this.boggle || {};
         }
         self.set(json);
       }, 1000);
+      return this;
     },
     pause: function () {
       clearInterval(this.iid);
+      return this;
     },
     finish: function () {
       this.pause();
@@ -292,6 +294,12 @@ this.boggle = this.boggle || {};
         minutes: 0,
         seconds: 0
       });
+      return this;
+    },
+    reset: function () {
+      this.pause();
+      this.set(this.defaults);
+      return this;
     }
   });
 
