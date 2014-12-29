@@ -15101,6 +15101,7 @@ equilibrate
 equilibria
 equilibrium
 equilibriums
+equine
 equinox
 equip
 equipment
@@ -25640,6 +25641,7 @@ Maxine
 Maxtor
 Maxwell
 Maxwellian
+may
 May
 Maya
 Mayans
