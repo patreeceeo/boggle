@@ -60,10 +60,10 @@ this.boggle = this.boggle || {};
         default:
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
-          "<div id='typewritter' class='u-fixedBottom'></div>" +
+          "<div id='typewritter' class='u-fixedBottom u-zTypewriter'></div>" +
           "<div id='answers' " +
           "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>" +
-          "<div id='controls' class='u-fixedBottom u-zAnswers'></div>";
+          "<div id='controls' class='u-fixedBottom u-zControls'></div>";
       }
     }
   });

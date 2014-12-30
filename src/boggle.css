@@ -153,6 +153,12 @@ p, ul, p {
 .u-zAnswers {
   z-index: 5;
 }
+.u-zTypewriter {
+  z-index: 6;
+}
+.u-zControls {
+  z-index: 7;
+}
 
 .u-inline {
   display: inline;
