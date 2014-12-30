@@ -74,7 +74,8 @@
         typewritterView,
         answersView,
         clockView,
-        scoreboardView;
+        scoreboardView,
+        controlsView;
 
     letterGridView = new boggle.views.LetterGrid({
       width: boggle.options.grid.width,
@@ -133,6 +134,10 @@
       model: game.state.model
     });
 
+    controlsView = new boggle.views.Controls({
+      model: new boggle.Model({visualThemeName: "Sun"})
+    });
+
     game.state.clock.on("timeup", function () {
       game.state.model.set({gameState: "over"});
     });
@@ -145,7 +150,8 @@
         typewritter: typewritterView,
         answers: answersView,
         clock: clockView,
-        scoreboard: scoreboardView
+        scoreboard: scoreboardView,
+        controls: controlsView
       }
     });
 

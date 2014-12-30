@@ -1,0 +1,32 @@
+
+body {
+  background-color: Black;
+  color: White;
+}
+
+a, a:visited {
+  color: Aqua;
+}
+
+.Scoreboard {
+  background: DarkSlateGray;
+}
+.Scoreboard.Scoreboard--delta {
+  background: LimeGreen;
+  color: Black;
+}
+
+.Clock {
+  background: SlateGray;
+}
+.Clock.Clock--alert {
+  background: DeepPink;
+  color: White;
+}
+
+.Answers .Answers-accent {
+  background: DarkSlateGray;
+}
+.Answers .Answers-checkIcon {
+  color: SpringGreen;
+}

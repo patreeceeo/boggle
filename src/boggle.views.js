@@ -62,7 +62,8 @@ this.boggle = this.boggle || {};
           "<div id='letterGrid'></div></div>" +
           "<div id='typewritter' class='u-fixedBottom'></div>" +
           "<div id='answers' " +
-          "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>";
+          "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>" +
+          "<div id='controls' class='u-fixedBottom u-zAnswers'></div>";
       }
     }
   });
@@ -306,6 +307,31 @@ this.boggle = this.boggle || {};
     },
     modelEvents: {
       "change": "render"
+    }
+  });
+
+  views.Controls = views.Base.extend({
+    html: function () {
+      var json = this.model.toJSON();
+      return "<div class='Controls u-pullRight'><a href='#' class='js-change-theme'>"+json.visualThemeName+"</a></div>";
+    },
+    events: {
+      "click .js-change-theme": function () {
+        if(this.model.get("visualThemeName") === "Sun") {
+          this.model.set({visualThemeName: "Moon"});
+        } else {
+          this.model.set({visualThemeName: "Sun"});
+        }
+      }
+    },
+    modelEvents: {
+      "change:visualThemeName": "_changeVisualTheme"
+    },
+    _changeVisualTheme: function () {
+      this.render();
+      $("#visual-theme-css-link").attr({
+        href: "boggle.theme."+this.model.get("visualThemeName")+".css"
+      });
     }
   });
 
