@@ -60,7 +60,7 @@ this.boggle = this.boggle || {};
         default:
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
-          "<div id='typewritter' class='u-fixedBottom u-zTypewriter'></div>" +
+          "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
           "<div id='answers' " +
           "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>" +
           "<div id='controls' class='u-fixedBottom u-zControls'></div>";
@@ -99,7 +99,7 @@ this.boggle = this.boggle || {};
     }
   });
 
-  views.Typewritter = views.Base.extend({
+  views.Typewriter = views.Base.extend({
     initialize: function () {
       this._super("initialize");
       _.bindAll(this, "_keyDowned");
@@ -107,17 +107,17 @@ this.boggle = this.boggle || {};
     html: function () {
       var json = this.model.toJSON();
       if(json.gameState === "paused") {
-        return "<div class='Typewritter Typewritter--paused'>"+
+        return "<div class='Typewriter Typewriter--paused'>"+
                "PAUSED -- Press SPACE to continue playing</div>";
       } else {
-        return "<div class='Typewritter'>" + this.collection.map(function (model) {
+        return "<div class='Typewriter'>" + this.collection.map(function (model) {
           var json = model.toJSON();
           return "<div class='Block u-widthHalf'>"+json.letter+"</div>";
-        }).join("") + "<div class='Block Typewritter-cursor'>&brvbar;</div></div>";
+        }).join("") + "<div class='Block Typewriter-cursor'>&brvbar;</div></div>";
       }
     },
     afterRender: function () {
-      this.$cursor = this.$(".Typewritter-cursor");
+      this.$cursor = this.$(".Typewriter-cursor");
     },
     collectionEvents: {
       "add remove reset": "render"
@@ -143,7 +143,7 @@ this.boggle = this.boggle || {};
           clearInterval(this._cursorInterval);
           document.body.removeEventListener("keydown", this._keyDowned);
           this.$cursor.addClass("u-hidden");
-          this.$(".Typewritter").addClass("Typewritter--wrong");
+          this.$(".Typewriter").addClass("Typewriter--wrong");
           break;
         case "over":
           clearInterval(this._cursorInterval);

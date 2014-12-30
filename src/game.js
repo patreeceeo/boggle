@@ -71,7 +71,7 @@
   setTimeout(function () {
     var gameView, 
         letterGridView, 
-        typewritterView,
+        typewriterView,
         answersView,
         clockView,
         scoreboardView,
@@ -83,7 +83,7 @@
       collection: game.state.letterGrid
     });
 
-    typewritterView = new boggle.views.Typewritter({
+    typewriterView = new boggle.views.Typewriter({
       collection: game.state.guessLetters,
       model: game.state.model
     });
@@ -99,7 +99,7 @@
       }
     }
 
-    typewritterView.on("enter", function (word) {
+    typewriterView.on("enter", function (word) {
       var wordModel = game.state.answers.findWhere({word: word});
 
       if(word[0] === ".") {
@@ -147,7 +147,7 @@
       model: game.state.model,
       children: {
         letterGrid: letterGridView,
-        typewritter: typewritterView,
+        typewriter: typewriterView,
         answers: answersView,
         clock: clockView,
         scoreboard: scoreboardView,
