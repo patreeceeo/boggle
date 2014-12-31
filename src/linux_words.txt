@@ -10546,6 +10546,7 @@ coworker
 cows
 cowslip
 cowslips
+coy
 coyote
 coyotes
 coypu
@@ -16009,6 +16010,7 @@ factual
 factually
 faculties
 faculty
+fad
 fade
 faded
 fadeout
@@ -36844,6 +36846,7 @@ Shafer
 Shaffer
 shaft
 shafts
+shag
 shaggy
 shakable
 shakably
