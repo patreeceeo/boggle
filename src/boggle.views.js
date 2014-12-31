@@ -313,7 +313,7 @@ this.boggle = this.boggle || {};
   views.Controls = views.Base.extend({
     html: function () {
       var json = this.model.toJSON();
-      return "<div class='Controls u-pullRight'><a href='#' class='js-change-theme'>"+json.visualThemeName+"</a></div>";
+      return "<div class='Controls u-pullRight'>theme: <a href='#' class='js-change-theme'>"+json.visualThemeName+"</a></div>";
     },
     events: {
       "click .js-change-theme": function () {
