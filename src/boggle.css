@@ -79,15 +79,15 @@ p, ul, p {
   color: LimeGreen;
 }
 
-.Typewritter-cursor {
+.Typewriter-cursor {
   color: gray;
   margin: -0.1em;
 }
-.Typewritter.Typewritter--wrong div {
+.Typewriter.Typewriter--wrong div {
   color: Crimson;
   text-decoration: line-through;
 }
-.Typewritter.Typewritter--paused {
+.Typewriter.Typewriter--paused {
   color: Gray;
 }
 
