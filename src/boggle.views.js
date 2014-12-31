@@ -249,8 +249,7 @@ this.boggle = this.boggle || {};
         return "<ul class='Answers'>"+items+"</ul>" +
             "<section>"+
             "<h1>Whoah! "+json.score+" points!</h1>"+
-            "<p><img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'></p>"+
-            "<p>Press SPACE to play again.</p>"+
+            "<img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'>"+
             "</section>";
       } else {
         return "<ul class='Answers'>"+items+"</ul>";
@@ -276,7 +275,9 @@ this.boggle = this.boggle || {};
         seconds = "0" + seconds;
       }
       if(json.minutes === 0) {
-        if(json.seconds <= 30) {
+        if(json.seconds === 0) {
+          return "<div class='Clock Clock--alert'>Press SPACE to play again</div>";
+        } else if(json.seconds <= 30) {
           return "<div class='Clock Clock--alert'>t - :" + seconds + "</div>";
         } else {
           return "<div class='Clock'>t - :" + seconds + "</div>";
