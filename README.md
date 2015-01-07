@@ -1,6 +1,12 @@
-# backbone.snake_case_trans
+# Boggle!
 
-Don't like using snake_case in your Backbone app just because it talks to a Ruby server?
+## How to play
+
+1. Clone the repo
+2. Open src/boggle.html
+
+
+
 
 
 
