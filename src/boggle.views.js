@@ -80,14 +80,15 @@ this.boggle = this.boggle || {};
     _block: function (options) {
       return "<div class='Block u-width" + options.width +
           " u-height" + options.height + " " + options.className + "'>" + 
-          options.content + "</div>";
+          "<div class='Block-inner'>" + options.content + "</div></div>";
     },
     html: function () {
       var blocks = this.collection.map(function (model) {
         return this._block({
           width: 1,
           height: 1,
-          content: model.get("letter")
+          content: model.get("letter"),
+          className: "u-rotate-" + _.sample([0, 90, 180, 270])
         });
       }, this).join("");
       return this._block({
@@ -314,7 +315,9 @@ this.boggle = this.boggle || {};
   views.Controls = views.Base.extend({
     html: function () {
       var json = this.model.toJSON();
-      return "<div class='Controls u-pullRight'>theme: <a href='#' class='js-change-theme'>"+json.visualThemeName+"</a></div>";
+      return "<div class='Controls u-pullRight'>theme: <a href='#' class='js-change-theme'>"+
+        json.visualThemeName +
+        "</a></div>";
     },
     events: {
       "click .js-change-theme": function () {

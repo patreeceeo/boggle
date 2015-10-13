@@ -23,7 +23,20 @@ p, ul, p {
 }
 
 .Block {
-  display: inline-block;
+  float: left;
+}
+.Block-inner {
+  transform: translate(8px, -3px);
+}
+
+.u-rotate-90 {
+  transform: rotate(90deg);
+}
+.u-rotate-180 {
+  transform: rotate(180deg);
+}
+.u-rotate-270 {
+  transform: rotate(270deg);
 }
 
 .LetterGrid {
@@ -168,3 +181,4 @@ p, ul, p {
 .u-pullRight {
   float: right;
 }
+
