@@ -80,15 +80,16 @@ this.boggle = this.boggle || {};
     _block: function (options) {
       return "<div class='Block u-width" + options.width +
           " u-height" + options.height + " " + options.className + "'>" + 
-          "<div class='Block-inner'>" + options.content + "</div></div>";
+          options.content + "</div>";
     },
     html: function () {
       var blocks = this.collection.map(function (model) {
         return this._block({
           width: 1,
           height: 1,
-          content: model.get("letter"),
-          className: "u-rotate-" + _.sample([0, 90, 180, 270])
+          content: "<div class='Block-inner'>" + model.get("letter") + "</div>" ,
+          className: "u-rotate-" + model.get("rotation") + " " +
+            (model.get("highlight") ? "u-highlight" : "")
         });
       }, this).join("");
       return this._block({
@@ -97,7 +98,7 @@ this.boggle = this.boggle || {};
         content: blocks,
         className: "LetterGrid"
       });
-    }
+    },
   });
 
   views.Typewriter = views.Base.extend({
@@ -202,11 +203,18 @@ this.boggle = this.boggle || {};
   });
 
   views.WordList = views.Base.extend({
+    initialize: function (options) {
+      this._super("initialize");
+      this.letterGrid = options.letterGrid;  
+    },
     collectionEvents: {
       "add remove change": "render"
     },
     modelEvents: {
       "change:gameState": "render"
+    },
+    events: {
+      "mouseover .Answers-text": "handleMouseoverAnswer"
     },
     html: function () {
       var json = this.model.toJSON();
@@ -265,6 +273,18 @@ this.boggle = this.boggle || {};
           }
         });
       }
+    },
+    handleMouseoverAnswer: function (e) {
+      var word = $(e.target).text();
+      var cubes = boggle.wordToCubesMap[word];
+      var self = this;
+      this.letterGrid.each(function (cube) {
+        cube.set({highlight: false}); 
+      });
+      _.forEach(cubes, function (index) {
+        self.letterGrid.at(index).set({highlight: true}, {silent: true});
+      });
+      this.letterGrid.trigger("change");
     }
   });
 

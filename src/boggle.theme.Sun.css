@@ -26,3 +26,7 @@ a, a:visited {
 .Answers .Answers-checkIcon {
   color: LimeGreen;
 }
+
+.u-highlight {
+  background: yellow;
+}

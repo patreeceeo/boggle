@@ -94,7 +94,7 @@ this.boggle = this.boggle || {};
     // window.console.debug.apply(window.console, arguments);
   };
 
-  // Find a path in a 2D space that does is continuous and does not double-back
+  // Find a path in a 2D space that is continuous and does not double-back
   // on itself. The 2D space is represented as a 2D array of numbers, each number 
   // is an index for a space in a boggle field.
   // 
@@ -121,10 +121,12 @@ this.boggle = this.boggle || {};
           usedbits |= 1 << cubeIndex;
           if(paths.length === 1) {
             this._debug("eureka!");
+            boggle.wordToCubesMap[boggle.currentWord].unshift(cubeIndex);
             retval = 1;
           } else {
             retval = this._findPath(paths.slice(letterIndex + 1), usedbits, cubeIndex);
             if(retval === 1) {
+              boggle.wordToCubesMap[boggle.currentWord].unshift(cubeIndex);
               return 1;
             }
           }
@@ -139,6 +141,8 @@ this.boggle = this.boggle || {};
     var letterMap = {},
         indexedWordList = {},
         foundWords = [];
+
+    boggle.wordToCubesMap = {};
 
     boggle.forEach(letterGrid, function (letter, gridIndex) {
       var gridIndexes = letterMap[letter] = letterMap[letter] || [];
@@ -160,6 +164,7 @@ this.boggle = this.boggle || {};
         var paths, usedbits = 0;
 
         this._debug("current word:", word);
+        boggle.currentWord = word;
 
         paths = this.map(word, function (letter, letterIndex) {
           var nextLetter = word[letterIndex + 1];
@@ -167,6 +172,8 @@ this.boggle = this.boggle || {};
         });
 
         this._debug("paths:", paths);
+
+        boggle.wordToCubesMap[word] = [];
 
         if(this._findPath(paths, usedbits) === 1) {
           foundWords[foundWords.length] = word;

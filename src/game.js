@@ -1,4 +1,4 @@
-!(function (boggle) {
+!(function (boggle, _) {
   "use strict";
 
   var game = {};
@@ -49,7 +49,11 @@
     var rawLetterGrid = boggle.createLetterGrid();
     game.state.model.set(game.state.model.constructor.prototype.defaults);
     game.state.letterGrid.reset(boggle.map(rawLetterGrid, function (letter) {
-       return {letter: letter};
+      return {
+        letter: letter,
+        rotation: _.sample([0, 90, 180, 270]),
+        highlight: false
+      };
     }));
     game.state.answers.reset();
     game.state.answers.addWords(boggle.findWords(
@@ -80,7 +84,7 @@
     letterGridView = new boggle.views.LetterGrid({
       width: boggle.options.grid.width,
       height: boggle.options.grid.height,
-      collection: game.state.letterGrid
+      collection: game.state.letterGrid,
     });
 
     typewriterView = new boggle.views.Typewriter({
@@ -123,7 +127,8 @@
 
     answersView = new boggle.views.WordList({
       collection: game.state.answers,
-      model: game.state.model
+      model: game.state.model,
+      letterGrid: game.state.letterGrid
     });
 
     clockView = new boggle.views.Clock({
@@ -158,4 +163,4 @@
     gameView.render();
     game.state.model.set({gameState: "ready"});
   }, 1);
-})(this.boggle);
+})(this.boggle, this._);

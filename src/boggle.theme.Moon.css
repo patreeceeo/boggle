@@ -30,3 +30,7 @@ a, a:visited {
 .Answers .Answers-checkIcon {
   color: SpringGreen;
 }
+
+.u-highlight {
+  background: darkSlateBlue;
+}
