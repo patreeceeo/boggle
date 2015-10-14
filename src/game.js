@@ -43,7 +43,7 @@
   game.state.guessLetters = new boggle.LetterCollection();
   game.state.answers = new boggle.WordCollection();
   game.state.clock = new boggle.Clock();
-  game.state.letterGrid = new boggle.Collection();
+  game.state.letterGrid = new boggle.LetterCollection();
 
   function resetGame () {
     var rawLetterGrid = boggle.createLetterGrid();

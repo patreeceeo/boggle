@@ -47,10 +47,6 @@ p, ul, p {
   text-align: center;
   width: 100%;
 }
-.Clock.Clock--alert {
-  background: Crimson;
-  color: white;
-}
 
 .Scoreboard {
   font-size: 0.5em;
@@ -77,6 +73,7 @@ p, ul, p {
   z-index: 1;
   position: absolute;
   left: 12px;
+  cursor: pointer;
 }
 .Answers .Answers-accent {
   position: absolute;
@@ -182,3 +179,6 @@ p, ul, p {
   float: right;
 }
 
+.u-underline {
+  border-bottom: 5px solid currentColor;
+}

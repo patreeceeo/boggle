@@ -5,6 +5,10 @@ body {
 }
 
 a, a:visited {
+  color: MediumTurquoise;
+}
+
+a:hover {
   color: Aqua;
 }
 
@@ -20,7 +24,7 @@ a, a:visited {
   background: SlateGray;
 }
 .Clock.Clock--alert {
-  background: DeepPink;
+  background-color: DeepPink;
   color: White;
 }
 
@@ -32,5 +36,9 @@ a, a:visited {
 }
 
 .u-highlight {
-  background: darkSlateBlue;
+  background: DeepPink;
+}
+
+.u-underline {
+  border-bottom-color: DarkSlateBlue;
 }

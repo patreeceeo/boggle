@@ -79,7 +79,7 @@ this.boggle = this.boggle || {};
     },
     _block: function (options) {
       return "<div class='Block u-width" + options.width +
-          " u-height" + options.height + " " + options.className + "'>" + 
+          " u-height" + options.height + " " + options.classNames.join(" ") + "'>" + 
           options.content + "</div>";
     },
     html: function () {
@@ -88,15 +88,18 @@ this.boggle = this.boggle || {};
           width: 1,
           height: 1,
           content: "<div class='Block-inner'>" + model.get("letter") + "</div>" ,
-          className: "u-rotate-" + model.get("rotation") + " " +
-            (model.get("highlight") ? "u-highlight" : "")
+          classNames: [
+            "u-rotate-" + model.get("rotation"),
+            (model.get("highlight") ? "u-highlight" : ""),
+            (model.isqupdbn() ? "u-underline" : "")
+          ]
         });
       }, this).join("");
       return this._block({
         width: this.width,
         height: this.height,
         content: blocks,
-        className: "LetterGrid"
+        classNames: ["LetterGrid"]
       });
     },
   });

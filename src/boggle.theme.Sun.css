@@ -5,7 +5,11 @@ body {
 }
 
 a, a:visited {
-  color: Blue;
+  color: SkyBlue;
+}
+
+a:hover {
+  color: RoyalBlue;
 }
 
 .Scoreboard {
@@ -17,7 +21,11 @@ a, a:visited {
 }
 
 .Clock {
-  background: WhiteSmoke;
+  background-color: WhiteSmoke;
+}
+.Clock.Clock--alert {
+  background-color: Crimson;
+  color: white;
 }
 
 .Answers .Answers-accent {
@@ -28,5 +36,9 @@ a, a:visited {
 }
 
 .u-highlight {
-  background: yellow;
+  background: Gold;
+}
+
+.u-underline {
+  border-bottom-color: SkyBlue;
 }

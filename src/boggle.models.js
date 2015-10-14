@@ -1,19 +1,29 @@
 this.boggle = this.boggle || {};
 
-(function(boggle, Backbone) {
+(function(boggle, Backbone, _) {
   "use strict";
 
   boggle.Model = Backbone.Model;
 
   boggle.Collection = Backbone.Collection;
 
+  boggle.Letter = boggle.Model.extend({
+    isqupdbn: function () {
+      return _.any("qupdbn", function (letter) {
+        return letter === this.attributes.letter;
+      }, this);
+    }
+  });
+
   boggle.LetterCollection = boggle.Collection.extend({
+    model: boggle.Letter,
     toString: function () {
       return this.reduce(function (memo, model) {
         return memo + model.get("letter");
       }, "");
-    }
+    },
   });
+
   boggle.WordCollection = boggle.Collection.extend({
     contains: function (word) {
       return this.filter(function (model) {
@@ -88,4 +98,4 @@ this.boggle = this.boggle || {};
     }
   });
 
-})(this.boggle, this.Backbone);
+})(this.boggle, this.Backbone, this._);
