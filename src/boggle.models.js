@@ -3,7 +3,14 @@ this.boggle = this.boggle || {};
 (function(boggle, Backbone, _) {
   "use strict";
 
-  boggle.Model = Backbone.Model;
+  boggle.Model = Backbone.Model.extend({
+    fetch: function () {
+      this.set(JSON.parse(localStorage.getItem("boggle-" + this.id)));
+    },
+    save: function () {
+      localStorage.setItem("boggle-" + this.id, JSON.stringify(this.toJSON()));
+    }
+  });
 
   boggle.Collection = Backbone.Collection;
 
@@ -39,6 +46,7 @@ this.boggle = this.boggle || {};
 
   boggle.Game = boggle.Model.extend({
     defaults: {
+      id: "game",
       gameState: "init",
       score: 0,
       scoreDelta: 0

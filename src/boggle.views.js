@@ -343,6 +343,9 @@ this.boggle = this.boggle || {};
   });
 
   views.Controls = views.Base.extend({
+    initialize: function () {
+      this._setVisualTheme();  
+    },
     html: function () {
       var json = this.model.toJSON();
       return "<div class='Controls u-pullRight'>theme: <a href='#' class='js-change-theme'>"+
@@ -356,16 +359,20 @@ this.boggle = this.boggle || {};
         } else {
           this.model.set({visualThemeName: "Sun"});
         }
+        this.model.save();
       }
     },
     modelEvents: {
       "change:visualThemeName": "_changeVisualTheme"
     },
-    _changeVisualTheme: function () {
-      this.render();
+    _setVisualTheme: function () {
       $("#visual-theme-css-link").attr({
         href: "boggle.theme."+this.model.get("visualThemeName")+".css"
       });
+    },
+    _changeVisualTheme: function () {
+      this.render();
+      this._setVisualTheme();
     }
   });
 

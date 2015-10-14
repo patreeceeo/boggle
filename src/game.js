@@ -44,6 +44,13 @@
   game.state.answers = new boggle.WordCollection();
   game.state.clock = new boggle.Clock();
   game.state.letterGrid = new boggle.LetterCollection();
+  game.state.settings = new boggle.Model({
+    id: "settings",
+    visualThemeName: "Sun"
+  });
+
+  game.state.settings.fetch();
+  game.state.settings.save();
 
   function resetGame () {
     var rawLetterGrid = boggle.createLetterGrid();
@@ -140,7 +147,7 @@
     });
 
     controlsView = new boggle.views.Controls({
-      model: new boggle.Model({visualThemeName: "Sun"})
+      model: game.state.settings
     });
 
     game.state.clock.on("timeup", function () {
