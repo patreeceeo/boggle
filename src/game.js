@@ -50,7 +50,7 @@
       case "ready":
         game.state.clock.pause();
         var unpause = function (e) {
-          if(e.keyCode === 32) {
+          if((e.keyCode || e.charCode) === 32) {
             game.state.model.set({gameState: "playing"});
             $(document).unbind("keypress", unpause);
           }
