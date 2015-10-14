@@ -184,7 +184,7 @@
     });
 
     if(localStorage.getItem("boggle-wordToCubesMap") !== null) {
-      var loadSavedGame = root.confirm("Load saved game?");
+      var loadSavedGame = root.confirm("Restore previous game?");
       if(loadSavedGame) {
         game.state.answers.fetch();
         game.state.clock.fetch();
