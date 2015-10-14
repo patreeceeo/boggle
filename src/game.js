@@ -1,10 +1,49 @@
-!(function (boggle, _) {
+!(function (boggle, _, root) {
   "use strict";
 
   var game = {};
 
   game.state = {};
   game.state.model = new boggle.Game();
+  game.state.guessLetters = new boggle.LetterCollection();
+  game.state.answers = new boggle.WordCollection([], {
+    id: "answers"
+  });
+  game.state.clock = new boggle.Clock();
+  game.state.letterGrid = new boggle.LetterCollection([], {
+    id: "lettergrid"
+  });
+  game.state.settings = new boggle.Model({
+    id: "settings",
+    visualThemeName: "Sun"
+  });
+  game.state.settings.fetch();
+  game.state.settings.save();
+
+  function resetGame () {
+    var rawLetterGrid = boggle.createLetterGrid();
+    game.state.model.set(game.state.model.constructor.prototype.defaults);
+    game.state.letterGrid.reset(boggle.map(rawLetterGrid, function (letter) {
+      return {
+        letter: letter,
+        rotation: _.sample([0, 90, 180, 270]),
+        highlight: false
+      };
+    }));
+    game.state.answers.reset();
+    game.state.answers.addWords(boggle.findWords(
+        boggle.masterWordList.en, 
+        rawLetterGrid
+    ));
+
+    game.state.model.set({
+      maxScore: game.state.answers.reduce(function (maxScore, word) {
+        return maxScore + boggle.scoreWord(word); 
+      }, 0)
+    });
+    game.state.clock.reset();
+  }
+
   game.state.model.on("change:gameState", function (model, gameState) {
     switch(gameState) {
       case "paused":
@@ -40,43 +79,7 @@
         break;
     }
   });
-  game.state.guessLetters = new boggle.LetterCollection();
-  game.state.answers = new boggle.WordCollection();
-  game.state.clock = new boggle.Clock();
-  game.state.letterGrid = new boggle.LetterCollection();
-  game.state.settings = new boggle.Model({
-    id: "settings",
-    visualThemeName: "Sun"
-  });
 
-  game.state.settings.fetch();
-  game.state.settings.save();
-
-  function resetGame () {
-    var rawLetterGrid = boggle.createLetterGrid();
-    game.state.model.set(game.state.model.constructor.prototype.defaults);
-    game.state.letterGrid.reset(boggle.map(rawLetterGrid, function (letter) {
-      return {
-        letter: letter,
-        rotation: _.sample([0, 90, 180, 270]),
-        highlight: false
-      };
-    }));
-    game.state.answers.reset();
-    game.state.answers.addWords(boggle.findWords(
-        boggle.masterWordList.en, 
-        rawLetterGrid
-    ));
-
-    game.state.model.set({
-      maxScore: game.state.answers.reduce(function (maxScore, word) {
-        return maxScore + boggle.scoreWord(word); 
-      }, 0)
-    });
-    game.state.clock.reset();
-  }
-
-  resetGame();
 
   // wait for page to load and render
   setTimeout(function () {
@@ -169,5 +172,30 @@
 
     gameView.render();
     game.state.model.set({gameState: "ready"});
+
+    root.addEventListener("beforeunload", function () {
+      if(game.state.model.get("gameState") !== "over") {
+        game.state.model.save();
+        game.state.letterGrid.save();
+        game.state.answers.save();
+        game.state.clock.save();
+        localStorage.setItem("boggle-wordToCubesMap", JSON.stringify(boggle.wordToCubesMap));
+      }
+    });
+
+    if(localStorage.getItem("boggle-wordToCubesMap") !== null) {
+      var loadSavedGame = root.confirm("Load saved game?");
+      if(loadSavedGame) {
+        game.state.answers.fetch();
+        game.state.clock.fetch();
+        game.state.letterGrid.fetch();
+        boggle.wordToCubesMap = JSON.parse(localStorage.getItem("boggle-wordToCubesMap"));
+        game.state.model.fetch();
+      } else {
+        resetGame();
+      }
+    } else {
+      resetGame();
+    }
   }, 1);
-})(this.boggle, this._);
+})(this.boggle, this._, this);

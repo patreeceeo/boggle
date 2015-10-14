@@ -5,14 +5,31 @@ this.boggle = this.boggle || {};
 
   boggle.Model = Backbone.Model.extend({
     fetch: function () {
-      this.set(JSON.parse(localStorage.getItem("boggle-" + this.id)));
+      var key = "boggle-" + this.id;
+      if(localStorage.getItem(key) != null) {
+        this.set(JSON.parse(localStorage.getItem(key)));
+      }
     },
     save: function () {
       localStorage.setItem("boggle-" + this.id, JSON.stringify(this.toJSON()));
     }
   });
 
-  boggle.Collection = Backbone.Collection;
+  boggle.Collection = Backbone.Collection.extend({
+    initialize: function (models, options) {
+      this.id = (options || {}).id;
+    },
+    fetch: function () {
+      var key = "boggle-" + this.id;
+      if(localStorage.getItem(key) != null) {
+        this.reset(JSON.parse(localStorage.getItem(key)));
+      }
+    },
+    save: function () {
+      localStorage.setItem("boggle-" + this.id, JSON.stringify(this.toJSON()));
+    }
+  });
+
 
   boggle.Letter = boggle.Model.extend({
     isqupdbn: function () {
@@ -63,8 +80,9 @@ this.boggle = this.boggle || {};
 
   boggle.Clock = boggle.Model.extend({
     defaults: {
-      "minutes": 2,
-      "seconds": 0
+      id: "clock",
+      minutes: 2,
+      seconds: 0
     },
     initialize: function () {
       return this;
