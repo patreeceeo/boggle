@@ -344,6 +344,7 @@ this.boggle = this.boggle || {};
 
   views.Controls = views.Base.extend({
     initialize: function () {
+      this._super("initialize");
       this._setVisualTheme();  
     },
     html: function () {
