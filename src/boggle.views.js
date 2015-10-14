@@ -214,7 +214,8 @@ this.boggle = this.boggle || {};
       "change:gameState": "render"
     },
     events: {
-      "mouseover .Answers-text": "handleMouseoverAnswer"
+      "mouseover .Answers-text": "handleMouseoverAnswer",
+      "mouseout": "handleMouseoutAnswers"
     },
     html: function () {
       var json = this.model.toJSON();
@@ -279,10 +280,16 @@ this.boggle = this.boggle || {};
       var cubes = boggle.wordToCubesMap[word];
       var self = this;
       this.letterGrid.each(function (cube) {
-        cube.set({highlight: false}); 
+        cube.set({highlight: false}, {silent: true}); 
       });
       _.forEach(cubes, function (index) {
         self.letterGrid.at(index).set({highlight: true}, {silent: true});
+      });
+      this.letterGrid.trigger("change");
+    },
+    handleMouseoutAnswers: function () {
+      this.letterGrid.each(function (cube) {
+        cube.set({highlight: false}, {silent: true}); 
       });
       this.letterGrid.trigger("change");
     }
