@@ -71,7 +71,7 @@ this.boggle = this.boggle || {};
           "<section>"+
           "<h1>Whoah! "+json.score+" points!</h1>"+
           "<img src='http://thecatapi.com/api/images/get?format=src&type=gif''>"+
-          "<p>Sharable link: <br><input type='text' value='"+this.urlEncodeGame()+"'></p>"+
+          "<br>Sharable link: <br><input type='text' value='"+this.urlEncodeGame()+"'>"+
           "</section>" +
           "</div>"+
           "<div id='controls' class='u-fixedBottom u-zControls'></div>";
