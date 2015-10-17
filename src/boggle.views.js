@@ -63,7 +63,6 @@ this.boggle = this.boggle || {};
         case "ready":
           return "<h1>Press SPACE to play.</h1>";
         case "over":
-          var rando = Math.floor(Math.random()*1000);
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
@@ -71,7 +70,7 @@ this.boggle = this.boggle || {};
           "<div id='answers'></div>" +
           "<section>"+
           "<h1>Whoah! "+json.score+" points!</h1>"+
-          "<img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'>"+
+          "<img src='http://thecatapi.com/api/images/get?format=src&type=gif''>"+
           "<p>Sharable link: <br><input type='text' value='"+this.urlEncodeGame()+"'></p>"+
           "</section>" +
           "</div>"+
@@ -89,7 +88,7 @@ this.boggle = this.boggle || {};
 
   views.LetterGrid = views.Base.extend({
     collectionEvents: {
-      "add remove change": "render"
+      "reset add remove change": "render"
     },
     initialize: function (options) {
       this._super("initialize");

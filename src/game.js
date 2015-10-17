@@ -45,6 +45,10 @@
   }
 
   game.state.model.on("change:gameState", function (model, gameState) {
+    if(gameState !== "init" && gameState !== "ready") {
+      $("#help").hide();
+    }
+
     switch(gameState) {
       case "paused":
       case "ready":
@@ -72,7 +76,6 @@
         game.state.clock.pause();
         break;
       case "playing":
-        $("#help").hide();
         game.state.clock.start();
         break;
       default:
@@ -176,7 +179,7 @@
           ls: game.state.letterGrid.map(function (c) {
             return c.get("letter"); 
           }).join(""),
-          as: answers.pluck("word"),
+          as: answers.pluck("word")
         });
       }
     });
@@ -194,19 +197,66 @@
       }
     });
 
-    if(localStorage.getItem("boggle-wordToCubesMap") !== null) {
-      var loadSavedGame = root.confirm("Restore previous game?");
-      if(loadSavedGame) {
-        game.state.answers.fetch();
-        game.state.clock.fetch();
-        game.state.letterGrid.fetch();
-        boggle.wordToCubesMap = JSON.parse(localStorage.getItem("boggle-wordToCubesMap"));
-        game.state.model.fetch();
+    function queryStringToObject (str) {
+	    return (decodeURIComponent(str)).replace(/(^\?)/,"")
+        .split("&")
+        .map(function(n){
+          n = n.split("=");
+          if(~n[0].indexOf("[]")) {
+            var key = n[0].replace(/\[\]/, "");
+            this[key] = this[key] || [];
+            this[key].push(n[1]);
+          } else {
+            this[n[0]] = n[1];
+          }
+          return this;
+        }.bind({}))[0];
+    }
+
+    if(window.location.search !== "") {
+      var data = queryStringToObject(window.location.search);
+      var rawLetterGrid = data.ls.split("");
+      game.state.model.set(game.state.model.constructor.prototype.defaults);
+      game.state.letterGrid.reset(boggle.map(rawLetterGrid, function (letter) {
+        return {
+          letter: letter,
+          rotation: _.sample([0, 90, 180, 270]),
+          highlight: false
+        };
+      }));
+      game.state.answers.reset();
+      game.state.answers.addWords(boggle.findWords(
+            boggle.masterWordList.en, 
+            rawLetterGrid
+            ));
+      _.each(data.as, function (word) {
+        game.state.model.score(word);
+        game.state.answers.get(word).set({found: true});
+      });
+      game.state.model.set({
+        maxScore: game.state.answers.reduce(function (maxScore, word) {
+          return maxScore + boggle.scoreWord(word); 
+        }, 0)
+      });
+      game.state.clock.finish();
+      game.state.model.set({
+        gameState: data.gs
+      });
+    } else {
+      if(localStorage.getItem("boggle-wordToCubesMap") !== null) {
+        var loadSavedGame = root.confirm("Restore previous game?");
+        if(loadSavedGame) {
+          game.state.answers.fetch();
+          game.state.clock.fetch();
+          game.state.letterGrid.fetch();
+          boggle.wordToCubesMap = JSON.parse(localStorage.getItem("boggle-wordToCubesMap"));
+          game.state.model.fetch();
+        } else {
+          resetGame();
+        }
       } else {
         resetGame();
       }
-    } else {
-      resetGame();
     }
   }, 1);
 })(this.boggle, this._, this);

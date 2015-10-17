@@ -40,6 +40,7 @@ this.boggle = this.boggle || {};
   });
 
   boggle.Word = boggle.Model.extend({
+    idAttribute: "word",
     defaults: {
       found: false
     }
