@@ -39,6 +39,12 @@ this.boggle = this.boggle || {};
     }
   });
 
+  boggle.Word = boggle.Model.extend({
+    defaults: {
+      found: false
+    }
+  });
+
   boggle.LetterCollection = boggle.Collection.extend({
     model: boggle.Letter,
     toString: function () {
@@ -49,6 +55,7 @@ this.boggle = this.boggle || {};
   });
 
   boggle.WordCollection = boggle.Collection.extend({
+    model: boggle.Word,
     contains: function (word) {
       return this.filter(function (model) {
         return word === model.get("word");
@@ -75,7 +82,7 @@ this.boggle = this.boggle || {};
         score: score + scoreDelta,
         scoreDelta: scoreDelta
       });
-    }
+    },
   });
 
   boggle.Clock = boggle.Model.extend({

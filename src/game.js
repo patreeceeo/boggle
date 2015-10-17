@@ -167,6 +167,17 @@
         clock: clockView,
         scoreboard: scoreboardView,
         controls: controlsView
+      },
+      urlEncodeGame: function () {
+        var base = window.location.href; 
+        var answers = new boggle.WordCollection(game.state.answers.where({found: true}));
+        return base + "?" + $.param({
+          gs: game.state.model.get("gameState"),
+          ls: game.state.letterGrid.map(function (c) {
+            return c.get("letter"); 
+          }).join(""),
+          as: answers.pluck("word"),
+        });
       }
     });
 

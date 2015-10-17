@@ -22,6 +22,15 @@ p, ul, p {
   margin-left: 1em;
 }
 
+input {
+  width: 100%;
+  font: inherit;
+  font-size: 50%;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+}
+
 .Block {
   float: left;
 }

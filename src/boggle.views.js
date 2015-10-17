@@ -44,9 +44,13 @@ this.boggle = this.boggle || {};
   });
 
   views.Game = views.Base.extend({
+    initialize: function (options) {
+      this.urlEncodeGame = options.urlEncodeGame;
+      this._super("initialize", options);
+    },
     modelEvents: {
       "change:gameState": function (model, gameState) {
-        if(gameState === "playing" || gameState === "ready") {
+        if(gameState !== "wrong") {
           this.render();
         }
       }
@@ -55,9 +59,24 @@ this.boggle = this.boggle || {};
       var json = this.model.toJSON();
       
       switch(json.gameState) {
+        case "init":
         case "ready":
           return "<h1>Press SPACE to play.</h1>";
-        default:
+        case "over":
+          var rando = Math.floor(Math.random()*1000);
+          return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
+          "<div id='letterGrid'></div></div>" +
+          "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
+          "<div class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'>" +
+          "<div id='answers'></div>" +
+          "<section>"+
+          "<h1>Whoah! "+json.score+" points!</h1>"+
+          "<img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'>"+
+          "<p>Sharable link: <br><input type='text' value='"+this.urlEncodeGame()+"'></p>"+
+          "</section>" +
+          "</div>"+
+          "<div id='controls' class='u-fixedBottom u-zControls'></div>";
+        case "playing":
           return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
@@ -65,7 +84,7 @@ this.boggle = this.boggle || {};
           "class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'></div>" +
           "<div id='controls' class='u-fixedBottom u-zControls'></div>";
       }
-    }
+    },
   });
 
   views.LetterGrid = views.Base.extend({
@@ -218,7 +237,7 @@ this.boggle = this.boggle || {};
     },
     events: {
       "mouseover .Answers-text": "handleMouseoverAnswer",
-      "mouseout": "handleMouseoutAnswers"
+      "mouseout": "handleMouseoutAnswers",
     },
     html: function () {
       var json = this.model.toJSON();
@@ -257,16 +276,7 @@ this.boggle = this.boggle || {};
         }
       }).join("");
 
-      if(json.gameState === "over") {
-        var rando = Math.floor(Math.random()*1000);
-        return "<ul class='Answers'>"+items+"</ul>" +
-            "<section>"+
-            "<h1>Whoah! "+json.score+" points!</h1>"+
-            "<img src='http://thecatapi.com/api/images/get?format=src&type=gif&rando="+rando+"'>"+
-            "</section>";
-      } else {
-        return "<ul class='Answers'>"+items+"</ul>";
-      }
+      return "<ul class='Answers'>"+items+"</ul>";
     },
     afterRender: function (changedModel) {
       var self = this;
@@ -295,7 +305,7 @@ this.boggle = this.boggle || {};
         cube.set({highlight: false}, {silent: true}); 
       });
       this.letterGrid.trigger("change");
-    }
+    },
   });
 
   views.Clock = views.Base.extend({
@@ -349,9 +359,11 @@ this.boggle = this.boggle || {};
     },
     html: function () {
       var json = this.model.toJSON();
-      return "<div class='Controls u-pullRight u-textRight'>theme: <a href='#' class='js-change-theme'>"+
+      return "<div class='Controls u-pullRight u-textRight'>"+
+        "theme: <a href='#' class='js-change-theme'>"+
         json.visualThemeName +
-        "</a><br>Made by <a href='https://patrickcanfield.com' target='_blank'>Patrick Canfield</a></div>";
+        "</a><br>Made by " +
+        "<a href='https://patrickcanfield.com' target='_blank'>Patrick Canfield</a></div>";
     },
     events: {
       "click .js-change-theme": function () {
