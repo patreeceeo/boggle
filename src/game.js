@@ -172,7 +172,7 @@
         controls: controlsView
       },
       urlEncodeGame: function () {
-        var base = window.location.href; 
+        var base = window.location.href.split("?")[0]; 
         var answers = new boggle.WordCollection(game.state.answers.where({found: true}));
         return base + "?" + $.param({
           gs: game.state.model.get("gameState"),
