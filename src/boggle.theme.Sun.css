@@ -40,5 +40,14 @@ a:hover {
 }
 
 .u-underline {
-  border-bottom-color: SkyBlue;
+  border-color: SkyBlue;
+}
+.Block--rot90.u-underline {
+  border-color: SkyBlue;
+}
+.Block--rot180.u-underline {
+  border-color: SkyBlue;
+}
+.Block--rot270.u-underline {
+  border-color: SkyBlue;
 }

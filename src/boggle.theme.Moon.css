@@ -40,5 +40,14 @@ a:hover {
 }
 
 .u-underline {
+  border-color: DarkSlateBlue;
+}
+.Block--rot90.u-underline {
+  border-left-color: DarkSlateBlue;
+}
+.Block--rot180.u-underline {
   border-bottom-color: DarkSlateBlue;
+}
+.Block--rot270.u-underline {
+  border-right-color: DarkSlateBlue;
 }
