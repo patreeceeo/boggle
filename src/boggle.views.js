@@ -87,9 +87,9 @@ this.boggle = this.boggle || {};
         return this._block({
           width: 1,
           height: 1,
-          content: "<div class='Block-inner'>" + model.get("letter") + "</div>" ,
+          content: "<div class='Block-inner'>" + model.get("letter") + "</div>",
           classNames: [
-            "u-rotate-" + model.get("rotation"),
+            ("Block--rot" + model.get("rotation")),
             (model.get("highlight") ? "u-highlight" : ""),
             (model.isqupdbn() ? "u-underline" : "")
           ]
