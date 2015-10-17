@@ -349,9 +349,9 @@ this.boggle = this.boggle || {};
     },
     html: function () {
       var json = this.model.toJSON();
-      return "<div class='Controls u-pullRight'>theme: <a href='#' class='js-change-theme'>"+
+      return "<div class='Controls u-pullRight u-textRight'>theme: <a href='#' class='js-change-theme'>"+
         json.visualThemeName +
-        "</a></div>";
+        "</a><br>Made by <a href='https://patrickcanfield.com' target='_blank'>Patrick Canfield</a></div>";
     },
     events: {
       "click .js-change-theme": function () {

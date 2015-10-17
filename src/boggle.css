@@ -105,6 +105,15 @@ p, ul, p {
   font-size: 0.5em;
   margin: 0 1em;
   color: Gray;
+  opacity: 0.5;
+  -moz-opacity: 0.5;
+  -webkit-opacity: 0.5;
+}
+
+.Controls:hover {
+  opacity: 1;
+  -moz-opacity: 1;
+  -webkit-opacity: 1;
 }
 
 .u-widthHalf {
@@ -179,6 +188,11 @@ p, ul, p {
   float: right;
 }
 
+.u-textRight {
+  text-align: right;
+}
+
 .u-underline {
   border-bottom: 5px solid currentColor;
 }
+
