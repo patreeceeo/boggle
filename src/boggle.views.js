@@ -63,7 +63,8 @@ this.boggle = this.boggle || {};
         case "ready":
           return "<h1>Press SPACE to play.</h1>";
         case "over":
-          return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
+          return "<div class='u-fixedTop u-zTop'>" +
+          "<div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
           "<div class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'>" +
@@ -76,7 +77,7 @@ this.boggle = this.boggle || {};
           "</div>"+
           "<div id='controls' class='u-fixedBottom u-zControls'></div>";
         case "playing":
-          return "<div class='u-fixedTop'><div id='clock'></div><div id='scoreboard'></div>" +
+          return "<div class='u-fixedTop u-zTop'><div id='clock'></div><div id='scoreboard'></div>" +
           "<div id='letterGrid'></div></div>" +
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
           "<div id='answers' " +

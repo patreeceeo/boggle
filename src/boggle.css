@@ -201,6 +201,9 @@ input {
 .u-zControls {
   z-index: 7;
 }
+.u-zTop {
+  z-index: 10;
+}
 
 .u-inline {
   display: inline;
