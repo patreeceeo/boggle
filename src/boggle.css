@@ -15,11 +15,11 @@ h1, h2 {
 }
 
 h1, h2, p, pre, ul {
-  margin: 0 0 1em 0;
+  padding: 0 0 3rem 0;
 }
 
 p, ul, p {
-  margin-left: 1em;
+  padding-left: 3rem;
 }
 
 input {
@@ -181,8 +181,7 @@ input {
   width: 100%;
 }
 .u-clockHeightMargin {
-  margin-top: 1em;
-  padding-bottom: 1em;
+  padding-top: 3rem;
 }
 .u-gridWidthMargin {
   margin-left: 10rem;
