@@ -39,15 +39,15 @@ a:hover {
   background: DeepPink;
 }
 
-.u-underline {
-  border-color: DarkSlateBlue;
-}
-.Block--rot90.u-underline {
-  border-left-color: DarkSlateBlue;
-}
-.Block--rot180.u-underline {
+.Block--rot0.Block--underline {
   border-bottom-color: DarkSlateBlue;
 }
-.Block--rot270.u-underline {
+.Block--rot90.Block--underline {
+  border-left-color: DarkSlateBlue;
+}
+.Block--rot180.Block--underline {
+  border-top-color: DarkSlateBlue;
+}
+.Block--rot270.Block--underline {
   border-right-color: DarkSlateBlue;
 }

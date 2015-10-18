@@ -39,15 +39,15 @@ a:hover {
   background: Gold;
 }
 
-.u-underline {
-  border-color: SkyBlue;
+.Block--rot0.Block--underline {
+  border-bottom-color: SkyBlue;
 }
-.Block--rot90.u-underline {
-  border-color: SkyBlue;
+.Block--rot90.Block--underline {
+  border-left-color: SkyBlue;
 }
-.Block--rot180.u-underline {
-  border-color: SkyBlue;
+.Block--rot180.Block--underline {
+  border-top-color: SkyBlue;
 }
-.Block--rot270.u-underline {
-  border-color: SkyBlue;
+.Block--rot270.Block--underline {
+  border-right-color: SkyBlue;
 }

@@ -109,7 +109,7 @@ this.boggle = this.boggle || {};
           classNames: [
             ("Block--rot" + model.get("rotation")),
             (model.get("highlight") ? "u-highlight" : ""),
-            (model.isqupdbn() ? "u-underline" : "")
+            (model.isqupdbn() ? "Block--underline" : "")
           ]
         });
       }, this).join("");
