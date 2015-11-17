@@ -33,7 +33,7 @@
     game.state.answers.reset();
     game.state.answers.addWords(boggle.findWords(
         boggle.masterWordList.en, 
-        rawLetterGrid
+        boggle.createLetterMap(rawLetterGrid)
     ));
 
     game.state.model.set({
@@ -227,7 +227,7 @@
       game.state.answers.reset();
       game.state.answers.addWords(boggle.findWords(
             boggle.masterWordList.en, 
-            rawLetterGrid
+            boggle.createLetterMap(rawLetterGrid)
             ));
       _.each(data.as, function (word) {
         game.state.model.score(word);

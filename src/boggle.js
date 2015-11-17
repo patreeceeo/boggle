@@ -72,18 +72,23 @@ this.boggle = this.boggle || {};
   // to letter2, as indicated by a mapping of letters to cubeIndexes
   // where the letter can be found.
   boggle._findPotentialWordCubesForLetter = function (letter1, letter2, letterMap) {
-    var retval = [],
+    var retval = {
+      letter: letter1,
+      used: false,
+      cubeIndexes: []
+    },
         set1 = letterMap[letter1] || [],
         set2 = letterMap[letter2] || [];
 
     if(letter2 == null) {
-      return set1;
+      retval.cubeIndexes = set1;
+      return retval;
     }
 
     this.forEach(set1, function (index1) {
       this.forEach(set2, function (index2) {
         if(this._adjacencyMap[index1][index2]) {
-          retval[retval.length] = index1;
+          retval.cubeIndexes.push(index1);
         }
       });
     });
@@ -94,70 +99,81 @@ this.boggle = this.boggle || {};
     // window.console.debug.apply(window.console, arguments);
   };
 
+
+  boggle.WordSearch = function (word, letterMap) {
+    this.word = word;
+    this.usedbits = 0;
+    this.potentialWordCubes = boggle.map(word, function (letter, letterIndex) {
+        var nextLetter = word[letterIndex + 1];
+        return this._findPotentialWordCubesForLetter(letter, nextLetter, letterMap);
+    });
+  };
+
+  boggle.WordSearch.prototype.forEach = boggle.forEach;
+
   // Given a set of sets of cubes, find a spatially continuous path using one
   // cube from each set. Additionally, though the same cube may appear in 
   // multiple sets, the path can only use each cube once. In other words, the
   // path must be like that of a valid word in a Boggle letter grid.
   //
   // If such a path exists, return 1, else return -1.
-  boggle._findPath = function (paths, usedbits, startCubeIndex) {
+  boggle.WordSearch.prototype.findPath = function () {
+    return this._findPathRecursively(this.potentialWordCubes, null);
+  };
+
+  boggle.WordSearch.prototype._findPathRecursively = function (potentialWordCubes, startCubeIndex) {
     var retval = -1;
-    this._debug("startCubeIndex", startCubeIndex);
-    this.forEach(paths, function (cubeIndexes, letterIndex) {
-      this._debug("remaining path length:", paths.length, "usedbits:", usedbits, 
-        "cubeIndexes:", cubeIndexes);
-      return this.forEach(cubeIndexes, function (cubeIndex) {
-        this._debug("cubeIndex", cubeIndex);
-        if(!((1 << cubeIndex) & usedbits) && 
-          (startCubeIndex == null || this._adjacencyMap[startCubeIndex][cubeIndex] == 1)) {
-          this._debug("choosing cubeIndex:", cubeIndex);
-          usedbits |= 1 << cubeIndex;
-          if(paths.length === 1) {
-            this._debug("eureka!");
-            boggle.wordToCubesMap[boggle.currentWord].unshift(cubeIndex);
+    this.forEach(potentialWordCubes, function (potentialWordCubesForLetter, letterIndex) {
+      return this.forEach(potentialWordCubesForLetter.cubeIndexes, function (cubeIndex) {
+        if(!((1 << cubeIndex) & this.usedbits) && 
+          (startCubeIndex == null || boggle._adjacencyMap[startCubeIndex][cubeIndex] == 1)) {
+          this.usedbits |= 1 << cubeIndex;
+          if(potentialWordCubes.length === 1) {
+            boggle.wordToCubesMap[this.word].unshift(cubeIndex);
             retval = 1;
           } else {
-            retval = this._findPath(paths.slice(letterIndex + 1), usedbits, cubeIndex);
+            retval = this._findPathRecursively(
+              potentialWordCubes.slice(letterIndex + 1), 
+              cubeIndex
+            );
             if(retval === 1) {
-              boggle.wordToCubesMap[boggle.currentWord].unshift(cubeIndex);
+              boggle.wordToCubesMap[this.word].unshift(cubeIndex);
               return 1;
             }
           }
         }
       }) || -1;
     });
-    this._debug("backtracking, status:", retval);
     return retval;
   };
 
-  boggle.findWords = function (wordList, letterGrid) {
-    var letterMap = {},
-        foundWords = [];
+  boggle.findWord = function (word, letterMap) {
+    boggle.wordToCubesMap[word] = [];
 
-    boggle.wordToCubesMap = {};
+    var search = new boggle.WordSearch(word, letterMap);
+
+    return search.findPath();
+  };
+
+  boggle.createLetterMap = function (letterGrid) {
+    var letterMap = {};
 
     boggle.forEach(letterGrid, function (letter, gridIndex) {
       var gridIndexes = letterMap[letter] = letterMap[letter] || [];
-      gridIndexes[gridIndexes.length] = gridIndex;
+      gridIndexes.push(gridIndex);
     });
 
+    return letterMap;
+  };
+
+  boggle.findWords = function (wordList, letterMap) {
+    var foundWords = [];
+
+    boggle.wordToCubesMap = {};
+
     this.forEach(wordList, function (word) {
-      var potentialWordCubes, usedbits = 0;
-
-      this._debug("current word:", word);
-      boggle.currentWord = word;
-
-      potentialWordCubes = this.map(word, function (letter, letterIndex) {
-        var nextLetter = word[letterIndex + 1];
-        return this._findPotentialWordCubesForLetter(letter, nextLetter, letterMap);
-      });
-
-      this._debug("potentialWordCubes:", potentialWordCubes);
-
-      boggle.wordToCubesMap[word] = [];
-
-      if(this._findPath(potentialWordCubes, usedbits) === 1) {
-        foundWords[foundWords.length] = word;
+      if(boggle.findWord(word, letterMap) === 1) {
+        foundWords.push(word);
       }
     });
     return foundWords;
