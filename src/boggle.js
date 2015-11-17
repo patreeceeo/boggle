@@ -132,7 +132,6 @@ this.boggle = this.boggle || {};
 
   boggle.findWords = function (wordList, letterGrid) {
     var letterMap = {},
-        indexedWordList = {},
         foundWords = [];
 
     boggle.wordToCubesMap = {};
@@ -142,36 +141,24 @@ this.boggle = this.boggle || {};
       gridIndexes[gridIndexes.length] = gridIndex;
     });
 
-    boggle.forEach(wordList, function (word) {
-      var letter = word[0],
-          wordListForLetter;
+    this.forEach(wordList, function (word) {
+      var potentialWordCubes, usedbits = 0;
 
-      wordListForLetter = indexedWordList[letter] = indexedWordList[letter] || [];
-      if(letterMap[letter] != null) {
-        wordListForLetter[wordListForLetter.length] = word;
-      }
-    });
+      this._debug("current word:", word);
+      boggle.currentWord = word;
 
-    this.forEachKeyValue(indexedWordList, function (letter, wordListForLetter) {
-      this.forEach(wordListForLetter, function (word) {
-        var potentialWordCubes, usedbits = 0;
-
-        this._debug("current word:", word);
-        boggle.currentWord = word;
-
-        potentialWordCubes = this.map(word, function (letter, letterIndex) {
-          var nextLetter = word[letterIndex + 1];
-          return this._findPotentialWordCubesForLetter(letter, nextLetter, letterMap);
-        });
-
-        this._debug("potentialWordCubes:", potentialWordCubes);
-
-        boggle.wordToCubesMap[word] = [];
-
-        if(this._findPath(potentialWordCubes, usedbits) === 1) {
-          foundWords[foundWords.length] = word;
-        }
+      potentialWordCubes = this.map(word, function (letter, letterIndex) {
+        var nextLetter = word[letterIndex + 1];
+        return this._findPotentialWordCubesForLetter(letter, nextLetter, letterMap);
       });
+
+      this._debug("potentialWordCubes:", potentialWordCubes);
+
+      boggle.wordToCubesMap[word] = [];
+
+      if(this._findPath(potentialWordCubes, usedbits) === 1) {
+        foundWords[foundWords.length] = word;
+      }
     });
     return foundWords;
   };
