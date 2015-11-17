@@ -71,7 +71,7 @@ this.boggle = this.boggle || {};
   // Find all of the cubeIndexes at which letter1 is adjacent 
   // to letter2, as indicated by a mapping of letters to cubeIndexes
   // where the letter can be found.
-  boggle._findCubeIndexes = function (letter1, letter2, letterMap) {
+  boggle._findPotentialWordCubesForLetter = function (letter1, letter2, letterMap) {
     var retval = [],
         set1 = letterMap[letter1] || [],
         set2 = letterMap[letter2] || [];
@@ -94,19 +94,12 @@ this.boggle = this.boggle || {};
     // window.console.debug.apply(window.console, arguments);
   };
 
-  // Find a path in a 2D space that is continuous and does not double-back
-  // on itself. The 2D space is represented as a 2D array of numbers, each number 
-  // is an index for a space in a boggle field.
-  // 
-  // Example: 
+  // Given a set of sets of cubes, find a spatially continuous path using one
+  // cube from each set. Additionally, though the same cube may appear in 
+  // multiple sets, the path can only use each cube once. In other words, the
+  // path must be like that of a valid word in a Boggle letter grid.
   //
-  // 0  1  2  1
-  // 5  3  8  3
-  // 9    13
-  //
-  // There's at least one such path through the above "space" which is 
-  // given by 0, 1, 2, 3.
-  //
+  // If such a path exists, return 1, else return -1.
   boggle._findPath = function (paths, usedbits, startCubeIndex) {
     var retval = -1;
     this._debug("startCubeIndex", startCubeIndex);
@@ -161,21 +154,21 @@ this.boggle = this.boggle || {};
 
     this.forEachKeyValue(indexedWordList, function (letter, wordListForLetter) {
       this.forEach(wordListForLetter, function (word) {
-        var paths, usedbits = 0;
+        var potentialWordCubes, usedbits = 0;
 
         this._debug("current word:", word);
         boggle.currentWord = word;
 
-        paths = this.map(word, function (letter, letterIndex) {
+        potentialWordCubes = this.map(word, function (letter, letterIndex) {
           var nextLetter = word[letterIndex + 1];
-          return this._findCubeIndexes(letter, nextLetter, letterMap);
+          return this._findPotentialWordCubesForLetter(letter, nextLetter, letterMap);
         });
 
-        this._debug("paths:", paths);
+        this._debug("potentialWordCubes:", potentialWordCubes);
 
         boggle.wordToCubesMap[word] = [];
 
-        if(this._findPath(paths, usedbits) === 1) {
+        if(this._findPath(potentialWordCubes, usedbits) === 1) {
           foundWords[foundWords.length] = word;
         }
       });
