@@ -399,10 +399,10 @@
     "ZYMURGY"
   ];
   console.time("boggle.findWords " + wordList.length);
-  boggle.findWords(wordList, boggle.createLetterGrid());
+  boggle.findWordsBasic(wordList, boggle.createLetterGrid());
   console.timeEnd("boggle.findWords " + wordList.length);
 
   console.time("boggle.findWords " + boggle.masterWordList.en.length);
-  boggle.findWords(boggle.masterWordList.en, boggle.createLetterGrid());
+  boggle.findWordsBasic(boggle.masterWordList.en, boggle.createLetterGrid());
   console.timeEnd("boggle.findWords " + boggle.masterWordList.en.length);
 })(this.boggle, this.console);
