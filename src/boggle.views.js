@@ -70,7 +70,7 @@ this.boggle = this.boggle || {};
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
           "<div class='u-gridWidthMargin u-scrollContainer u-zAnswers'>" +
           "<div id='answers'></div>" +
-          "<section>"+
+          "<section class='Messages'>"+
           "<h1>Whoah! "+json.score+" points!</h1>"+
           "<img src='http://thecatapi.com/api/images/get?format=src&type=gif''>"+
           "<br>Sharable link: <br><input type='text' value='"+this.urlEncodeGame()+"'>"+

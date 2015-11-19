@@ -139,6 +139,10 @@ input {
   -webkit-opacity: 1;
 }
 
+.Messages {
+  margin: 1rem 0 10rem 1rem;
+}
+
 .u-widthHalf {
   width: 0.5em;
 }
