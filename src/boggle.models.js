@@ -62,9 +62,13 @@ this.boggle = this.boggle || {};
         return word === model.get("word");
       }, this).length > 0;
     },
-    addWords: function (words) {
+    addWords: function (wordToCubesMap) {
+      var words = _.keys(wordToCubesMap);
       this.add(words.map(function (word) {
-        return {word: word};
+        return {
+          word: word,
+          cubes: wordToCubesMap[word]
+        };
       }));
     }
   });

@@ -65,9 +65,10 @@ this.boggle = this.boggle || {};
         case "over":
           return "<div class='u-fixedTop u-zTop'>" +
           "<div id='clock'></div><div id='scoreboard'></div>" +
-          "<div id='letterGrid'></div></div>" +
+          "</div>" +
+          "<div id='letterGrid' class='u-clockHeightMargin'></div>" +
           "<div id='typewriter' class='u-fixedBottom u-zTypewriter'></div>" +
-          "<div class='u-gridWidthMargin u-clockHeightMargin u-scrollContainer u-zAnswers'>" +
+          "<div class='u-gridWidthMargin u-scrollContainer u-zAnswers'>" +
           "<div id='answers'></div>" +
           "<section>"+
           "<h1>Whoah! "+json.score+" points!</h1>"+
@@ -290,7 +291,7 @@ this.boggle = this.boggle || {};
     },
     handleMouseoverAnswer: function (e) {
       var word = $(e.target).text();
-      var cubes = boggle.wordToCubesMap[word];
+      var cubes = this.collection.get(word).get("cubes");
       var self = this;
       this.letterGrid.each(function (cube) {
         cube.set({highlight: false}, {silent: true}); 

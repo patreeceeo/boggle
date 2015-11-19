@@ -29,7 +29,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid))).toEqual(["monk"]);
+    expect(boggle.findWordsBasic(this.wordList, letterGrid)).toEqual(["monk"]);
   });
  
   it("finds vertical words", function () {
@@ -40,7 +40,7 @@ describe("boggle.findWords", function() {
       "k", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid))).toEqual(["monk"]);
+    expect(boggle.findWordsBasic(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
   it("finds diagonal words", function () {
@@ -51,7 +51,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", "k",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid))).toEqual(["monk"]);
+    expect(boggle.findWordsBasic(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
   it("finds backwards words", function () {
@@ -62,7 +62,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid))).toEqual(["monk"]);
+    expect(boggle.findWordsBasic(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
   it("finds zig zag words", function () {
@@ -73,7 +73,7 @@ describe("boggle.findWords", function() {
       " ", " ", "k", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid))).toEqual(["monk"]);
+    expect(boggle.findWordsBasic(this.wordList, letterGrid)).toEqual(["monk"]);
   });
 
   it("finds overlapping words", function () {
@@ -84,7 +84,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual(["monk", "monks"]);
   });
 
@@ -96,7 +96,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual(["bee", "zebra"]);
   });
 
@@ -108,7 +108,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual(["zebra"]);
   });
 
@@ -120,7 +120,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual([]);
   });
 
@@ -132,7 +132,7 @@ describe("boggle.findWords", function() {
       " ", " ", " ", " ",
     ];
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual(["aardvark", "aardvarks"]);
   });
  
@@ -145,7 +145,7 @@ describe("boggle.findWords", function() {
     ];
 
 
-    expect(boggle.findWords(this.wordList, boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(this.wordList, letterGrid))
       .toEqual([]);
   });
 
@@ -157,8 +157,21 @@ describe("boggle.findWords", function() {
       " ", "p", "n", " ",
     ];
 
-    expect(boggle.findWords(["pagan"], boggle.createLetterMap(letterGrid)))
+    expect(boggle.findWordsBasic(["pagan"], letterGrid))
       .toEqual([]);
   });
 });
 
+describe("boggle._findPathRecursively", function () {
+  "use strict";
+
+  it("returns the path through the given series of sets of cubes", function () {
+    var potentialWordCubes = [
+      { cubeIndexes: [ 1 ] }, 
+      { cubeIndexes: [ 5 ] }, 
+      { cubeIndexes: [ 2 ] },
+      { cubeIndexes: [ 7 ] },
+    ];
+    expect(boggle._findPathRecursively(potentialWordCubes, 0)).toEqual([1, 5, 2, 7]);
+  });
+});

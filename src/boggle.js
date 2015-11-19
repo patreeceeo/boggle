@@ -27,6 +27,16 @@ this.boggle = this.boggle || {};
     }
   };
 
+  boggle.keys = function (object) {
+    var retval = [];
+    for(var key in object) {
+      if(object.hasOwnProperty(key)) {
+        retval.push(key);
+      }
+    }
+    return retval;
+  };
+
   boggle.map = function (array, fn) {
     var i, retval = [], callback;
     callback = function (el, i) {
@@ -109,8 +119,6 @@ this.boggle = this.boggle || {};
     });
   };
 
-  boggle.WordSearch.prototype.forEach = boggle.forEach;
-
   // Given a set of sets of cubes, find a spatially continuous path using one
   // cube from each set. Additionally, though the same cube may appear in 
   // multiple sets, the path can only use each cube once. In other words, the
@@ -118,38 +126,34 @@ this.boggle = this.boggle || {};
   //
   // If such a path exists, return 1, else return -1.
   boggle.WordSearch.prototype.findPath = function () {
-    return this._findPathRecursively(this.potentialWordCubes, null);
+    return boggle._findPathRecursively(this.potentialWordCubes, this.usedbits, null);
   };
 
-  boggle.WordSearch.prototype._findPathRecursively = function (potentialWordCubes, startCubeIndex) {
-    var retval = -1;
+  boggle._findPathRecursively = function (potentialWordCubes, usedbits, startCubeIndex) {
+    var retval = [];
     this.forEach(potentialWordCubes, function (potentialWordCubesForLetter, letterIndex) {
       return this.forEach(potentialWordCubesForLetter.cubeIndexes, function (cubeIndex) {
-        if(!((1 << cubeIndex) & this.usedbits) && 
-          (startCubeIndex == null || boggle._adjacencyMap[startCubeIndex][cubeIndex] == 1)) {
-          this.usedbits |= 1 << cubeIndex;
+        if(!((1 << cubeIndex) & usedbits) && 
+          (startCubeIndex == null || this._adjacencyMap[startCubeIndex][cubeIndex] == 1)) {
+          usedbits |= 1 << cubeIndex;
           if(potentialWordCubes.length === 1) {
-            boggle.wordToCubesMap[this.word].unshift(cubeIndex);
-            retval = 1;
+            retval.unshift(cubeIndex);
           } else {
             retval = this._findPathRecursively(
               potentialWordCubes.slice(letterIndex + 1), 
+              usedbits,
               cubeIndex
             );
-            if(retval === 1) {
-              boggle.wordToCubesMap[this.word].unshift(cubeIndex);
-              return 1;
-            }
+            retval.unshift(cubeIndex);
+            return retval;
           }
         }
-      }) || -1;
+      }) || [];
     });
     return retval;
   };
 
   boggle.findWord = function (word, letterMap) {
-    boggle.wordToCubesMap[word] = [];
-
     var search = new boggle.WordSearch(word, letterMap);
 
     return search.findPath();
@@ -167,16 +171,19 @@ this.boggle = this.boggle || {};
   };
 
   boggle.findWords = function (wordList, letterMap) {
-    var foundWords = [];
-
-    boggle.wordToCubesMap = {};
+    var foundWords = {};
 
     this.forEach(wordList, function (word) {
-      if(boggle.findWord(word, letterMap) === 1) {
-        foundWords.push(word);
+      var path = boggle.findWord(word, letterMap);
+      if(path.length === word.length) {
+        foundWords[word] = path;
       }
     });
     return foundWords;
+  };
+
+  boggle.findWordsBasic = function (wordList, letterGrid) {
+    return boggle.keys(boggle.findWords(wordList, boggle.createLetterMap(letterGrid)));
   };
 
   boggle.random = function (min, max) {

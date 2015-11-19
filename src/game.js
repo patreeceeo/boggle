@@ -141,7 +141,7 @@
     answersView = new boggle.views.WordList({
       collection: game.state.answers,
       model: game.state.model,
-      letterGrid: game.state.letterGrid
+      letterGrid: game.state.letterGrid,
     });
 
     clockView = new boggle.views.Clock({
@@ -193,7 +193,6 @@
         game.state.letterGrid.save();
         game.state.answers.save();
         game.state.clock.save();
-        localStorage.setItem("boggle-wordToCubesMap", JSON.stringify(boggle.wordToCubesMap));
       }
     });
 
@@ -226,9 +225,9 @@
       }));
       game.state.answers.reset();
       game.state.answers.addWords(boggle.findWords(
-            boggle.masterWordList.en, 
-            boggle.createLetterMap(rawLetterGrid)
-            ));
+          boggle.masterWordList.en, 
+          boggle.createLetterMap(rawLetterGrid)
+      ));
       _.each(data.as, function (word) {
         game.state.model.score(word);
         game.state.answers.get(word).set({found: true});
@@ -243,13 +242,12 @@
         gameState: data.gs
       });
     } else {
-      if(localStorage.getItem("boggle-wordToCubesMap") !== null) {
+      if(localStorage.getItem("boggle-game") !== null) {
         var loadSavedGame = root.confirm("Restore previous game?");
         if(loadSavedGame) {
           game.state.answers.fetch();
           game.state.clock.fetch();
           game.state.letterGrid.fetch();
-          boggle.wordToCubesMap = JSON.parse(localStorage.getItem("boggle-wordToCubesMap"));
           game.state.model.fetch();
         } else {
           resetGame();
