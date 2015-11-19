@@ -39,15 +39,19 @@ input {
 }
 .Block--rot0 .Block-inner {
   transform: rotate(0deg) translate(8px, -3px);
+  -webkit-transform: rotate(0deg) translate(8px, -3px);
 }
 .Block--rot90 .Block-inner {
   transform: rotate(90deg) translate(8px, -3px);
+  -webkit-transform: rotate(90deg) translate(8px, -3px);
 }
 .Block--rot180 .Block-inner {
   transform: rotate(180deg) translate(8px, -3px);
+  -webkit-transform: rotate(180deg) translate(8px, -3px);
 }
 .Block--rot270 .Block-inner {
   transform: rotate(270deg) translate(8px, -3px);
+  -webkit-transform: rotate(270deg) translate(8px, -3px);
 }
 .Block--rot0.Block--underline {
   border-bottom: 5px solid transparent;
